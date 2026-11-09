@@ -3,32 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page Not Found — DS Simulations</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+    <title>404 Not Found — ds.sim</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fafafa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M3 3v18h18'/><path d='M7 16c2.5-4 5.5-10 8-10s3 8 5 8'/></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <nav class="nav">
         <div class="container nav-container">
-            <a href="index.html" class="nav-brand">📊 DS Simulations</a>
+            <a href="index.html" class="nav-brand">
+                <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 3v18h18" />
+                    <path d="M7 16c2.5-4 5.5-10 8-10s3 8 5 8" />
+                </svg>
+                <span class="brand-name">ds<span class="brand-dot">.</span>sim</span>
+            </a>
         </div>
     </nav>
 
     <main class="container" style="text-align: center; padding: 6rem 1rem;">
-        <h1 style="font-size: 5rem; font-weight: 700; margin-bottom: 1rem; color: var(--accent);">404</h1>
-        <h2 style="margin-bottom: 1rem;">Experiment Not Found</h2>
-        <p style="color: var(--text-secondary); max-width: 500px; margin: 0 auto 2rem auto;">
-            The simulation or page you are looking for doesn't exist or might still be in development.
+        <span class="badge badge-outline" style="margin-bottom: 1rem;">HTTP 404</span>
+        <h1 style="font-size: 3rem; font-weight: 600; margin-bottom: 0.75rem; letter-spacing: -0.03em;">Simulation Not Found</h1>
+        <p style="color: var(--muted-foreground); max-width: 460px; margin: 0 auto 2rem auto; font-size: 0.9375rem;">
+            The simulation or page you are looking for has not converged, does not exist, or is still in development.
         </p>
-        <a href="index.html" class="btn">← Return to Home</a>
+        <a href="index.html" class="btn btn-primary">Return to Home</a>
     </main>
 
     <footer class="footer">
-        <div class="container">
-            <p>Built with curiosity 🚀</p>
+        <div class="container text-center">
+            <p style="color: var(--muted-subtle); font-size: 0.8125rem;">&copy; 2026 ds.sim &middot; Open source under MIT</p>
         </div>
     </footer>
 </body>

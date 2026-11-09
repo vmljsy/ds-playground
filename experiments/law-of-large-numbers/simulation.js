@@ -333,3 +333,4 @@ export default function init() {
   runSimulation();
   console.log('Law of Large Numbers Simulation initialized ✅');
 }
+
