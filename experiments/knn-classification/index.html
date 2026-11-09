@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KNN Decision Boundaries &amp; Overfitting — ds.sim</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fafafa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='7.5' cy='7.5' r='.5' fill='%23fafafa'/><circle cx='18.5' cy='5.5' r='.5' fill='%23fafafa'/><circle cx='11.5' cy='11.5' r='.5' fill='%23fafafa'/><circle cx='7.5' cy='16.5' r='.5' fill='%23fafafa'/><circle cx='17.5' cy='14.5' r='.5' fill='%23fafafa'/><path d='M3 3v18h18'/></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container nav-container">
+            <a href="../../index.html" class="nav-brand">
+                <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 3v18h18" />
+                    <path d="M7 16c2.5-4 5.5-10 8-10s3 8 5 8" />
+                </svg>
+                <span class="brand-name">ds<span class="brand-dot">.</span>sim</span>
+            </a>
+            <div class="breadcrumb">
+                <a href="../../index.html">Home</a>
+                <span class="breadcrumb-sep">/</span>
+                <a href="../../index.html#experiments">Experiments</a>
+                <span class="breadcrumb-sep">/</span>
+                <span class="breadcrumb-current">KNN Decision Boundaries</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <!-- 1. Header -->
+        <header class="experiment-header">
+            <div class="hero-pill" style="margin-bottom: 1rem;">
+                <span class="hero-pill-indicator"></span>
+                <span>Supervised Learning &middot; Classification</span>
+            </div>
+            <h1>K-Nearest Neighbors &amp; Decision Boundaries</h1>
+            <p class="subtitle">Witness the Bias-Variance tradeoff live: how neighborhood size $K$ shifts the classifier from overfitting to underfitting</p>
+        </header>
+
+        <!-- 2. Theory Section -->
+        <div class="theory-box">
+            <h3>Non-Parametric Estimation &amp; Majority Voting</h3>
+            <p>
+                Unlike parametric models (e.g. Logistic Regression) that assume a specific functional form, the <strong>K-Nearest Neighbors (KNN)</strong> algorithm makes no prior structural assumptions about the data distribution. Given a query point $\mathbf{x} \in \mathbb{R}^d$, KNN locates the set $\mathcal{N}_K(\mathbf{x})$ of the $K$ closest training samples and estimates class probabilities via local empirical frequencies:
+            </p>
+            <p>
+                $$P(Y = c \mid \mathbf{x}) = \frac{1}{K} \sum_{i \in \mathcal{N}_K(\mathbf{x})} \mathbb{I}(y_i = c)$$
+            </p>
+            <p>
+                The predicted label is the plurality winner: $\hat{y} = \arg\max_c P(Y = c \mid \mathbf{x})$.
+            </p>
+            <div style="margin-top: 0.75rem; font-size: 0.875rem; color: var(--muted-foreground);">
+                <strong>Why choose odd values for $K$?</strong> In binary classification, restricting $K \in \{1, 3, 5, \dots\}$ guarantees that majority voting can never result in an ambiguous $50/50$ tie.
+            </div>
+        </div>
+
+        <!-- 3. Interactive Workbench (Sidebar + Main Layout) -->
+        <section class="section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <h2>Interactive Classification Workbench</h2>
+                <span class="badge badge-emerald" id="badge-regime">Optimal Generalization</span>
+            </div>
+
+            <div class="sim-layout">
+
+                <!-- Sidebar Parameter Controls -->
+                <aside class="sim-sidebar">
+
+                    <div class="controls-panel" style="margin-bottom: 0;">
+                        <div class="controls-panel-title">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20v-6M6 20V10M18 20V4"/></svg>
+                            <span>Model Hyperparameters</span>
+                        </div>
+
+                        <!-- Parameter K Slider -->
+                        <div class="control-group">
+                            <label for="k-slider">
+                                <span>Parameter K (Neighbors)</span>
+                                <span class="control-value" id="k-display">3</span>
+                            </label>
+                            <input type="range" id="k-slider" min="1" max="21" value="3" step="2">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.6875rem; color: var(--muted-subtle); margin-top: -0.25rem;">
+                                <span>K=1 (Overfit)</span>
+                                <span>K=9 (Balanced)</span>
+                                <span>K=21 (Underfit)</span>
+                            </div>
+                        </div>
+
+                        <!-- Click Action Toggle: Radio Buttons -->
+                        <div class="control-group">
+                            <label>Click Canvas to Add Point</label>
+                            <div class="radio-pill-group">
+                                <label id="lbl-radio-a" class="active">
+                                    <input type="radio" name="click-class" id="radio-class-a" value="0" checked>
+                                    <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--chart-rose);"></span>
+                                    <span>Class A (Red)</span>
+                                </label>
+                                <label id="lbl-radio-b">
+                                    <input type="radio" name="click-class" id="radio-class-b" value="1">
+                                    <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--chart-blue);"></span>
+                                    <span>Class B (Blue)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Distance Metric -->
+                        <div class="control-group">
+                            <label for="metric-select">Distance Metric</label>
+                            <select id="metric-select">
+                                <option value="euclidean" selected>Euclidean (L₂ Norm: √[Δx² + Δy²])</option>
+                                <option value="manhattan">Manhattan (L₁ Norm: |Δx| + |Δy|)</option>
+                            </select>
+                        </div>
+
+                        <!-- Dataset Preset -->
+                        <div class="control-group">
+                            <label for="preset-select">Benchmark Geometry</label>
+                            <select id="preset-select">
+                                <option value="moons" selected>Interlocking Half-Moons (~90 pts)</option>
+                                <option value="rings">Concentric Rings (~95 pts)</option>
+                                <option value="blobs">Overlapping Gaussian Blobs (~90 pts)</option>
+                            </select>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                            <button id="btn-add-noise" class="btn btn-secondary btn-sm" style="width: 100%;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                <span>Add 4 Random Outliers</span>
+                            </button>
+
+                            <button id="btn-clear-custom" class="btn btn-outline btn-sm" style="width: 100%;">
+                                <span>Clear Added Points</span>
+                            </button>
+
+                            <button id="btn-reset" class="btn btn-ghost btn-sm" style="width: 100%;">
+                                <span>Reset Dataset</span>
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <!-- Live Model Diagnostics Panel -->
+                    <div class="stats-panel-card">
+                        <div class="stats-panel-title">
+                            <span>Diagnostics &amp; Complexity</span>
+                            <span class="badge badge-secondary" style="font-size: 0.6875rem;">50×50 Grid</span>
+                        </div>
+
+                        <div class="stats-row">
+                            <span class="stats-row-label">Neighborhood (K)</span>
+                            <span class="stats-row-value" id="stat-k">3</span>
+                        </div>
+
+                        <div class="stats-row">
+                            <span class="stats-row-label">Class A Points (Red)</span>
+                            <span class="stats-row-value" id="stat-pts-a" style="color: var(--chart-rose);">45</span>
+                        </div>
+
+                        <div class="stats-row">
+                            <span class="stats-row-label">Class B Points (Blue)</span>
+                            <span class="stats-row-value" id="stat-pts-b" style="color: var(--chart-blue);">45</span>
+                        </div>
+
+                        <div class="stats-row">
+                            <span class="stats-row-label">Total Observations (N)</span>
+                            <span class="stats-row-value" id="stat-pts-total">90</span>
+                        </div>
+
+                        <div class="stats-row">
+                            <span class="stats-row-label">Training Accuracy</span>
+                            <span class="stats-row-value" id="stat-acc" style="color: var(--chart-emerald);">98.9%</span>
+                        </div>
+
+                        <!-- Qualitative Regime Explainer -->
+                        <div style="margin-top: 0.85rem; padding-top: 0.65rem; border-top: 1px solid var(--border-subtle);">
+                            <div style="font-size: 0.75rem; color: var(--muted-foreground); text-transform: uppercase; margin-bottom: 0.25rem; font-family: var(--font-mono);">
+                                Bias-Variance State
+                            </div>
+                            <div id="stat-regime-desc" style="font-size: 0.8125rem; color: var(--muted-foreground); line-height: 1.45;">
+                                Balanced trade-off between variance and bias; boundary reflects underlying manifold.
+                            </div>
+                        </div>
+                    </div>
+
+                </aside>
+
+                <!-- Main Plotly Visualization Area -->
+                <div class="sim-main">
+                    
+                    <div class="chart-container" style="padding: 1rem; position: relative;">
+                        <div id="knn-plot" style="width: 100%; min-height: 520px;"></div>
+                        <div style="position: absolute; bottom: 1.25rem; left: 1.25rem; font-size: 0.75rem; color: var(--muted-subtle); background: rgba(9,9,11,0.7); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                            Click anywhere on the graph to add a training point
+                        </div>
+                    </div>
+
+                    <!-- Step-by-Step Educational Cards -->
+                    <div class="grid-2">
+                        <div class="info-box">
+                            <strong>Overfitting at Low K (K = 1)</strong><br>
+                            When $K=1$, the decision boundary tightly wraps around every single training observation. Training error is zero, but variance is extreme: any slight label noise creates an isolated "island" in feature space that devastates test-set generalization.
+                        </div>
+
+                        <div class="warning-box">
+                            <strong>Underfitting at High K (K &ge; 15)</strong><br>
+                            As $K$ approaches sample size $N$, local neighborhood context is lost. The model votes become dominated by the global class balance, causing high bias. Complex geometric boundaries (like interlocking spirals or moons) are smoothed out into flat planes.
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- 4. Deep Dive Theory -->
+        <section class="section" style="border-top: 1px solid var(--border); padding-top: 2rem;">
+            <h2>Theoretical Foundations &amp; Nuances</h2>
+
+            <div class="grid-3" style="margin-top: 1.25rem;">
+                <div class="feature-card">
+                    <h3 class="feature-title">1. The Curse of Dimensionality</h3>
+                    <p class="feature-desc">
+                        In high-dimensional spaces ($d \gg 10$), the volume of space grows exponentially. All data points become approximately equidistant from one another ($\lim_{d \to \infty} \frac{\text{dist}_{\max} - \text{dist}_{\min}}{\text{dist}_{\min}} \to 0$), severely degrading distance-based metrics.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <h3 class="feature-title">2. Computational Complexity</h3>
+                    <p class="feature-desc">
+                        KNN is a <em>lazy learner</em>: training cost is $O(1)$, but inference cost is $O(n \cdot d)$ per query because all pairwise distances must be calculated. In production systems, $k$-d trees or Approximate Nearest Neighbor (ANN) indexes like HNSW are used.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <h3 class="feature-title">3. Metric Sensitivity</h3>
+                    <p class="feature-desc">
+                        Switching between <strong>Euclidean ($L_2$)</strong> and <strong>Manhattan ($L_1$)</strong> changes the shape of equidistant contours from circles to diamonds. In grid-like feature spaces (such as city blocks or taxicab routing), $L_1$ often outperforms $L_2$.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-inner">
+            <div class="footer-brand">
+                <a href="../../index.html" class="nav-brand">
+                    <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 3v18h18" />
+                        <path d="M7 16c2.5-4 5.5-10 8-10s3 8 5 8" />
+                    </svg>
+                    <span class="brand-name">ds<span class="brand-dot">.</span>sim</span>
+                </a>
+                <p class="footer-tagline">Interactive statistical and machine learning intuition in your browser.</p>
+            </div>
+            <div class="footer-nav">
+                <div class="footer-nav-col">
+                    <span class="footer-nav-title">Simulations</span>
+                    <a href="../kmeans-clustering/index.html" class="footer-nav-link">K-Means Clustering</a>
+                    <a href="../knn-classification/index.html" class="footer-nav-link">KNN Boundaries</a>
+                    <a href="../linear-regression/index.html" class="footer-nav-link">Linear Regression</a>
+                    <a href="../ab-testing/index.html" class="footer-nav-link">A/B Testing</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+    <script type="module">
+        import init from './simulation.js';
+        init();
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '$', right: '$', display: false }
+            ]
+        });
+    </script>
+</body>
+</html>
+

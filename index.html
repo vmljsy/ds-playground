@@ -127,16 +127,16 @@
         <!-- shadcn Filter Tabs -->
         <div class="tabs-list" role="tablist">
           <button class="tabs-trigger active" data-filter="all">
-            All <span class="tab-count">7</span>
+            All <span class="tab-count">9</span>
           </button>
           <button class="tabs-trigger" data-filter="probability">
             Probability <span class="tab-count">3</span>
           </button>
           <button class="tabs-trigger" data-filter="statistics">
-            Statistics <span class="tab-count">6</span>
+            Statistics <span class="tab-count">7</span>
           </button>
           <button class="tabs-trigger" data-filter="ml">
-            ML <span class="tab-count">1</span>
+            ML <span class="tab-count">3</span>
           </button>
         </div>
       </div>
@@ -477,18 +477,18 @@
           </div>
         </a>
 
-        <!-- Card 7: Linear Regression (Coming Soon) -->
-        <div class="experiment-card coming-soon" data-category="ml statistics">
+        <!-- Card 7: Linear Regression & OLS -->
+        <a href="experiments/linear-regression/index.html" class="experiment-card" data-category="ml statistics">
           <div class="card-header">
             <div class="card-meta">
               <div class="card-meta-left">
                 <span class="badge badge-outline">EXP-07</span>
                 <span class="badge badge-secondary">Regression</span>
               </div>
-              <span class="status-indicator"><span class="status-dot amber"></span> Planned</span>
+              <span class="status-indicator"><span class="status-dot"></span> Live</span>
             </div>
-            <h3 class="card-title">Linear Regression &amp; OLS</h3>
-            <p class="card-description">Interactively drag sample points and visualize how least-squares minimization adapts the slope, intercept, residuals, and R².</p>
+            <h3 class="card-title">Linear Regression &amp; Outliers</h3>
+            <p class="card-description">Interactively drag an outlier and visualize how least-squares error minimization rotates the line of best fit and blows up MSE.</p>
           </div>
 
           <!-- SVG Visual Preview: Scatter with Residuals & Fit Line -->
@@ -496,42 +496,182 @@
             <svg viewBox="0 0 300 120" fill="none" xmlns="http://www.w3.org/2000/svg">
               <line x1="20" y1="105" x2="280" y2="105" stroke="#27272a" stroke-width="1"/>
               <line x1="20" y1="15" x2="20" y2="105" stroke="#27272a" stroke-width="1"/>
-              <polygon points="35,92 265,22 265,38 35,102" fill="rgba(56, 189, 248, 0.08)"/>
-              <line x1="35" y1="97" x2="265" y2="30" stroke="#38bdf8" stroke-width="2"/>
-              <line x1="60" y1="89" x2="60" y2="78" stroke="#f43f5e" stroke-width="1.2" stroke-dasharray="2 2"/>
-              <line x1="110" y1="75" x2="110" y2="86" stroke="#f43f5e" stroke-width="1.2" stroke-dasharray="2 2"/>
-              <line x1="160" y1="60" x2="160" y2="48" stroke="#f43f5e" stroke-width="1.2" stroke-dasharray="2 2"/>
-              <line x1="210" y1="46" x2="210" y2="55" stroke="#f43f5e" stroke-width="1.2" stroke-dasharray="2 2"/>
-              <circle cx="60" cy="78" r="3.5" fill="#fafafa" stroke="#38bdf8" stroke-width="1.5"/>
-              <circle cx="110" cy="86" r="3.5" fill="#fafafa" stroke="#38bdf8" stroke-width="1.5"/>
-              <circle cx="160" cy="48" r="3.5" fill="#fafafa" stroke="#38bdf8" stroke-width="1.5"/>
-              <circle cx="210" cy="55" r="3.5" fill="#fafafa" stroke="#38bdf8" stroke-width="1.5"/>
-              <circle cx="245" cy="34" r="3.5" fill="#fafafa" stroke="#38bdf8" stroke-width="1.5"/>
+              <!-- Baseline uncorrupted line (dashed green) -->
+              <line x1="30" y1="92" x2="270" y2="28" stroke="#10b981" stroke-width="1.5" stroke-dasharray="3 3"/>
+              <!-- OLS line pulled down by outlier (rose) -->
+              <line x1="30" y1="78" x2="270" y2="62" stroke="#f43f5e" stroke-width="2"/>
+              <!-- Clean points (sky blue) -->
+              <circle cx="60" cy="85" r="3.5" fill="#38bdf8"/>
+              <circle cx="95" cy="74" r="3.5" fill="#38bdf8"/>
+              <circle cx="130" cy="66" r="3.5" fill="#38bdf8"/>
+              <circle cx="165" cy="56" r="3.5" fill="#38bdf8"/>
+              <circle cx="200" cy="46" r="3.5" fill="#38bdf8"/>
+              <circle cx="235" cy="38" r="3.5" fill="#38bdf8"/>
+              <!-- Outlier point (large red diamond) -->
+              <polygon points="245,95 250,90 255,95 250,100" fill="#f43f5e" stroke="#fafafa" stroke-width="1.5"/>
+              <!-- Residual drop line for outlier -->
+              <line x1="250" y1="64" x2="250" y2="92" stroke="#f43f5e" stroke-width="1.2" stroke-dasharray="2 2"/>
             </svg>
           </div>
 
           <div class="card-content">
             <div class="formula-box">
-              <code>β̂ = (XᵀX)⁻¹Xᵀy</code>
-              <span class="formula-label">OLS Solution</span>
+              <code>β₁ = Cov(X,Y) / Var(X)</code>
+              <span class="formula-label">Closed Form</span>
             </div>
             <div class="card-specs">
               <div class="spec-item">
                 <span class="spec-label">Metrics</span>
-                <span class="spec-value">SSE, MSE, R²</span>
+                <span class="spec-value">MSE, R², Leverage</span>
               </div>
               <div class="spec-item">
-                <span class="spec-label">Status</span>
-                <span class="spec-value">In Progress</span>
+                <span class="spec-label">Interaction</span>
+                <span class="spec-value">Live Draggable Point</span>
               </div>
             </div>
           </div>
 
           <div class="card-footer">
-            <span class="card-link-text" style="color: var(--muted-foreground);">In Development</span>
-            <span class="badge badge-outline">Roadmap</span>
+            <span class="card-link-text">Launch Simulation</span>
+            <svg class="card-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </div>
-        </div>
+        </a>
+
+        <!-- Card 8: K-Means Clustering -->
+        <a href="experiments/kmeans-clustering/index.html" class="experiment-card" data-category="ml">
+          <div class="card-header">
+            <div class="card-meta">
+              <div class="card-meta-left">
+                <span class="badge badge-outline">EXP-08</span>
+                <span class="badge badge-secondary">Clustering</span>
+              </div>
+              <span class="status-indicator"><span class="status-dot"></span> Live</span>
+            </div>
+            <h3 class="card-title">K-Means Clustering</h3>
+            <p class="card-description">Watch Lloyd's coordinate-descent algorithm iteratively partition 2D points into Voronoi clusters and converge to local WCSS minima.</p>
+          </div>
+
+          <!-- SVG Visual Preview: 3 Clusters with Centroid Crosses -->
+          <div class="card-visual">
+            <svg viewBox="0 0 300 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="20" y1="105" x2="280" y2="105" stroke="#27272a" stroke-width="1"/>
+              <!-- Cluster 1: Sky Blue -->
+              <circle cx="70" cy="40" r="3" fill="#38bdf8" opacity="0.8"/>
+              <circle cx="60" cy="48" r="3" fill="#38bdf8" opacity="0.8"/>
+              <circle cx="80" cy="46" r="3" fill="#38bdf8" opacity="0.8"/>
+              <circle cx="72" cy="55" r="3" fill="#38bdf8" opacity="0.8"/>
+              <!-- Centroid 1 (Cross) -->
+              <line x1="66" y1="47" x2="76" y2="47" stroke="#38bdf8" stroke-width="2.5"/>
+              <line x1="71" y1="42" x2="71" y2="52" stroke="#38bdf8" stroke-width="2.5"/>
+
+              <!-- Cluster 2: Rose Red -->
+              <circle cx="210" cy="35" r="3" fill="#f43f5e" opacity="0.8"/>
+              <circle cx="225" cy="42" r="3" fill="#f43f5e" opacity="0.8"/>
+              <circle cx="198" cy="45" r="3" fill="#f43f5e" opacity="0.8"/>
+              <circle cx="215" cy="52" r="3" fill="#f43f5e" opacity="0.8"/>
+              <!-- Centroid 2 (Cross) -->
+              <line x1="207" y1="44" x2="217" y2="44" stroke="#f43f5e" stroke-width="2.5"/>
+              <line x1="212" y1="39" x2="212" y2="49" stroke="#f43f5e" stroke-width="2.5"/>
+
+              <!-- Cluster 3: Emerald Green -->
+              <circle cx="140" cy="78" r="3" fill="#10b981" opacity="0.8"/>
+              <circle cx="152" cy="86" r="3" fill="#10b981" opacity="0.8"/>
+              <circle cx="132" cy="90" r="3" fill="#10b981" opacity="0.8"/>
+              <circle cx="145" cy="95" r="3" fill="#10b981" opacity="0.8"/>
+              <!-- Centroid 3 (Cross) -->
+              <line x1="137" y1="87" x2="147" y2="87" stroke="#10b981" stroke-width="2.5"/>
+              <line x1="142" y1="82" x2="142" y2="92" stroke="#10b981" stroke-width="2.5"/>
+            </svg>
+          </div>
+
+          <div class="card-content">
+            <div class="formula-box">
+              <code>J = Σ ||x - μ_j||²</code>
+              <span class="formula-label">Inertia (WCSS)</span>
+            </div>
+            <div class="card-specs">
+              <div class="spec-item">
+                <span class="spec-label">Algorithm</span>
+                <span class="spec-value">Lloyd's &amp; K-Means++</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Clusters (K)</span>
+                <span class="spec-value">1 to 7</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <span class="card-link-text">Launch Simulation</span>
+            <svg class="card-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </a>
+
+        <!-- Card 9: K-Nearest Neighbors -->
+        <a href="experiments/knn-classification/index.html" class="experiment-card" data-category="ml">
+          <div class="card-header">
+            <div class="card-meta">
+              <div class="card-meta-left">
+                <span class="badge badge-outline">EXP-09</span>
+                <span class="badge badge-secondary">Classification</span>
+              </div>
+              <span class="status-indicator"><span class="status-dot"></span> Live</span>
+            </div>
+            <h3 class="card-title">KNN Decision Boundaries</h3>
+            <p class="card-description">Sweep neighborhood size K across 50×50 grid predictions to explore the bias-variance tradeoff: overfitting vs underfitting.</p>
+          </div>
+
+          <!-- SVG Visual Preview: Two-Tone Decision Boundary -->
+          <div class="card-visual">
+            <svg viewBox="0 0 300 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <clipPath id="boundaryClip">
+                  <rect x="20" y="15" width="260" height="90" rx="4"/>
+                </clipPath>
+              </defs>
+              <g clip-path="url(#boundaryClip)">
+                <!-- Class A Region (Light Red) -->
+                <path d="M 20 15 L 280 15 L 280 70 Q 200 85 150 55 T 20 60 Z" fill="rgba(244, 63, 94, 0.25)"/>
+                <!-- Class B Region (Light Blue) -->
+                <path d="M 20 60 Q 90 40 150 55 T 280 70 L 280 105 L 20 105 Z" fill="rgba(56, 189, 248, 0.25)"/>
+                <!-- Decision Boundary Line -->
+                <path d="M 20 60 Q 90 40 150 55 T 280 70" stroke="#fafafa" stroke-width="2" stroke-dasharray="3 3"/>
+                <!-- Class A Red Points -->
+                <circle cx="80" cy="35" r="4" fill="#f43f5e"/>
+                <circle cx="120" cy="30" r="4" fill="#f43f5e"/>
+                <circle cx="160" cy="40" r="4" fill="#f43f5e"/>
+                <circle cx="210" cy="32" r="4" fill="#f43f5e"/>
+                <!-- Class B Blue Points -->
+                <circle cx="70" cy="85" r="4" fill="#38bdf8"/>
+                <circle cx="130" cy="80" r="4" fill="#38bdf8"/>
+                <circle cx="180" cy="72" r="4" fill="#38bdf8"/>
+                <circle cx="230" cy="88" r="4" fill="#38bdf8"/>
+              </g>
+            </svg>
+          </div>
+
+          <div class="card-content">
+            <div class="formula-box">
+              <code>P(Y=c|x) = (1/K) Σ I(y_i=c)</code>
+              <span class="formula-label">Majority Vote</span>
+            </div>
+            <div class="card-specs">
+              <div class="spec-item">
+                <span class="spec-label">Resolution</span>
+                <span class="spec-value">50×50 Surface</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Hyperparameter</span>
+                <span class="spec-value">K = 1 to 21</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <span class="card-link-text">Launch Simulation</span>
+            <svg class="card-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </a>
 
       </div>
 
@@ -611,6 +751,9 @@
           <a href="experiments/confidence-intervals/index.html" class="footer-nav-link">Confidence Intervals</a>
           <a href="experiments/hypothesis-testing/index.html" class="footer-nav-link">Hypothesis Testing</a>
           <a href="experiments/ab-testing/index.html" class="footer-nav-link">A/B Testing</a>
+          <a href="experiments/linear-regression/index.html" class="footer-nav-link">Linear Regression &amp; OLS</a>
+          <a href="experiments/kmeans-clustering/index.html" class="footer-nav-link">K-Means Clustering</a>
+          <a href="experiments/knn-classification/index.html" class="footer-nav-link">KNN Decision Boundaries</a>
         </div>
         <div class="footer-nav-col">
           <span class="footer-nav-title">References</span>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OLS Regression &amp; Outlier Robustness — ds.sim</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fafafa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M3 3v18h18'/><path d='m19 9-5 5-4-4-3 3'/></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container nav-container">
+            <a href="../../index.html" class="nav-brand">
+                <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 3v18h18" />
+                    <path d="M7 16c2.5-4 5.5-10 8-10s3 8 5 8" />
+                </svg>
+                <span class="brand-name">ds<span class="brand-dot">.</span>sim</span>
+            </a>
+            <div class="breadcrumb">
+                <a href="../../index.html">Home</a>
+                <span class="breadcrumb-sep">/</span>
+                <a href="../../index.html#experiments">Experiments</a>
+                <span class="breadcrumb-sep">/</span>
+                <span class="breadcrumb-current">OLS Regression</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <!-- 1. Header -->
+        <header class="experiment-header">
+            <div class="hero-pill" style="margin-bottom: 1rem;">
+                <span class="hero-pill-indicator"></span>
+                <span>Parametric Estimation &middot; Linear Models</span>
+            </div>
+            <h1>OLS Regression &amp; Outlier Robustness</h1>
+            <p class="subtitle">Drag a single outlier point and watch how Ordinary Least Squares minimization tilts the entire line of best fit</p>
+        </header>
+
+        <!-- 2. Theory Section -->
+        <div class="theory-box">
+            <h3>Closed-Form Ordinary Least Squares (OLS)</h3>
+            <p>
+                In simple linear regression, we model $y_i = \beta_0 + \beta_1 x_i + \epsilon_i$. The OLS objective minimizes the sum of squared vertical residuals:
+            </p>
+            <p>
+                $$\min_{\beta_0, \beta_1} \sum_{i=1}^{n} \left(y_i - (\beta_0 + \beta_1 x_i)\right)^2$$
+            </p>
+            <p>
+                Setting the partial derivatives with respect to $\beta_1$ and $\beta_0$ to zero yields the exact closed-form solution:
+            </p>
+            <p>
+                $$\beta_1 = \frac{\sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\sum_{i=1}^n (x_i - \bar{x})^2} = \frac{\text{Cov}(X, Y)}{\text{Var}(X)}, \qquad \beta_0 = \bar{y} - \beta_1 \bar{x}$$
+            </p>
+            <div style="margin-top: 0.75rem; font-size: 0.875rem; color: var(--muted-foreground);">
+                <strong>The Zero Breakdown Point:</strong> Because OLS minimizes <em>squared</em> deviations $(y - \hat{y})^2$, errors grow quadratically. A single extreme outlier with high leverage can exert infinite torque on the slope, rotating the entire model arbitrarily!
+            </div>
+        </div>
+
+        <!-- 3. Interactive Workbench (Sidebar + Main Layout) -->
+        <section class="section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <h2>Interactive Regression Workbench</h2>
+                <span class="badge badge-rose" id="badge-leverage">High Leverage &amp; Influential</span>
+            </div>
+
+            <div class="sim-layout">
+
+                <!-- Sidebar Parameter Controls -->
+                <aside class="sim-sidebar">
+
+                    <div class="controls-panel" style="margin-bottom: 0;">
+                        <div class="controls-panel-title">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            <span>Outlier Position &amp; Data</span>
+                        </div>
+
+                        <!-- Outlier X Slider -->
+                        <div class="control-group">
+                            <label for="outlier-x-slider">
+                                <span>Outlier X Coordinate</span>
+                                <span class="control-value" id="outlier-x-val">82.0</span>
+                            </label>
+                            <input type="range" id="outlier-x-slider" min="5" max="95" value="82" step="1">
+                        </div>
+
+                        <!-- Outlier Y Slider -->
+                        <div class="control-group">
+                            <label for="outlier-y-slider">
+                                <span>Outlier Y Coordinate</span>
+                                <span class="control-value" id="outlier-y-val">35.0</span>
+                            </label>
+                            <input type="range" id="outlier-y-slider" min="5" max="195" value="35" step="1">
+                        </div>
+
+                        <!-- Noise Level Slider -->
+                        <div class="control-group">
+                            <label for="noise-slider">
+                                <span>Base Data Noise (σ)</span>
+                                <span class="control-value" id="noise-val">5.5</span>
+                            </label>
+                            <input type="range" id="noise-slider" min="1" max="15" value="5.5" step="0.5">
+                        </div>
+
+                        <!-- Toggles -->
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle);">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; text-transform: none; font-size: 0.8125rem;">
+                                <input type="checkbox" id="toggle-residuals" checked style="accent-color: var(--primary);">
+                                <span>Show Residual Lines (e = y - ŷ)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; text-transform: none; font-size: 0.8125rem;">
+                                <input type="checkbox" id="toggle-baseline" checked style="accent-color: var(--chart-emerald);">
+                                <span>Show Uncorrupted Baseline Fit</span>
+                            </label>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                            <button id="btn-reset-outlier" class="btn btn-primary btn-sm" style="width: 100%;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                                <span>Reset Outlier (Snap to Line)</span>
+                            </button>
+
+                            <button id="btn-new-data" class="btn btn-secondary btn-sm" style="width: 100%;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                                <span>Generate New Data (15 pts)</span>
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <!-- Live Statistics & Equation Panel -->
+                    <div class="stats-panel-card">
+                        <div class="stats-panel-title">
+                            <span>Statistics &amp; Impact</span>
+                            <span class="badge badge-secondary" style="font-size: 0.6875rem;">Live OLS</span>
+                        </div>
+
+                        <div class="stats-row">
+                            <span class="stats-row-label">Fitted Equation (with Outlier)</span>
+                            <span class="stats-row-value" id="stat-equation" style="color: var(--chart-rose);">y = 0.95x + 42.1</span>
+                        </div>
+
+                        <div class="stats-row">
+                            <span class="stats-row-label">Mean Squared Error (MSE)</span>
+                            <span class="stats-row-value" id="stat-mse" style="color: var(--chart-rose);">648.20</span>
+                        </div>
+
+                        <div class="stats-row">
+                            <span class="stats-row-label">R² (Variance Explained)</span>
+                            <span class="stats-row-value" id="stat-r2">0.582</span>
+                        </div>
+
+                        <!-- Clean Baseline Comparison -->
+                        <div style="margin-top: 0.75rem; padding-top: 0.65rem; border-top: 1px solid var(--border-subtle);">
+                            <div style="font-size: 0.75rem; color: var(--chart-emerald); text-transform: uppercase; margin-bottom: 0.35rem; font-family: var(--font-mono); font-weight: 600;">
+                                Clean Baseline (15 pts, No Outlier)
+                            </div>
+                            <div class="stats-row">
+                                <span class="stats-row-label">Baseline Equation</span>
+                                <span class="stats-row-value" id="stat-base-equation" style="color: var(--chart-emerald);">y = 1.82x + 14.8</span>
+                            </div>
+                            <div class="stats-row">
+                                <span class="stats-row-label">Baseline MSE</span>
+                                <span class="stats-row-value" id="stat-base-mse" style="color: var(--chart-emerald);">28.40</span>
+                            </div>
+                            <div class="stats-row">
+                                <span class="stats-row-label">Baseline R²</span>
+                                <span class="stats-row-value" id="stat-base-r2">0.965</span>
+                            </div>
+                        </div>
+
+                        <!-- Outlier Impact Delta -->
+                        <div style="margin-top: 0.75rem; padding-top: 0.65rem; border-top: 1px solid var(--border-subtle);">
+                            <div class="stats-row">
+                                <span class="stats-row-label">Slope Distortion (Δβ₁)</span>
+                                <span class="stats-row-value" id="stat-slope-delta" style="color: var(--chart-amber);">-0.870 (-47.8%)</span>
+                            </div>
+                            <div class="stats-row">
+                                <span class="stats-row-label">MSE Explosion</span>
+                                <span class="stats-row-value" id="stat-mse-ratio" style="color: var(--chart-rose);">22.8× higher</span>
+                            </div>
+                            <div class="stats-row">
+                                <span class="stats-row-label">Outlier Location</span>
+                                <span class="stats-row-value font-mono">(<span id="stat-outlier-x">82.0</span>, <span id="stat-outlier-y">35.0</span>)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </aside>
+
+                <!-- Main Plotly Visualization Area -->
+                <div class="sim-main">
+                    
+                    <div class="chart-container" style="padding: 1rem; position: relative;">
+                        <div id="regression-plot" style="width: 100%; min-height: 520px;"></div>
+                        <div style="position: absolute; bottom: 1.25rem; left: 1.25rem; font-size: 0.75rem; color: var(--muted-subtle); background: rgba(9,9,11,0.7); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                            Interactive: Drag the red diamond or click anywhere to move the outlier
+                        </div>
+                    </div>
+
+                    <!-- Step-by-Step Educational Cards -->
+                    <div class="grid-2">
+                        <div class="info-box">
+                            <strong>High Leverage vs. Influential Observations</strong><br>
+                            A data point has <strong>high leverage</strong> if its predictor value $x_i$ is far from the mean $\bar{x}$. If this point also deviates from the regression line (large residual), it becomes an <strong>influential point</strong> that pulls the line toward itself like a physical lever!
+                        </div>
+
+                        <div class="warning-box">
+                            <strong>Why Squaring Magnifies Errors: L₂ vs L₁</strong><br>
+                            Because the objective squares residuals $e_i^2$, an error of $50$ contributes $2,500$ to the loss, whereas an error of $5$ contributes only $25$. Minimizing total error forces the line to sacrifice accuracy on the 15 clean points just to reduce the outlier's quadratic penalty.
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- 4. Deep Dive Theory -->
+        <section class="section" style="border-top: 1px solid var(--border); padding-top: 2rem;">
+            <h2>Robust Regression Alternatives</h2>
+
+            <div class="grid-3" style="margin-top: 1.25rem;">
+                <div class="feature-card">
+                    <h3 class="feature-title">1. Huber Loss (Smooth L₁/L₂)</h3>
+                    <p class="feature-desc">
+                        Huber loss blends the best of both worlds: it behaves quadratically ($\frac{1}{2} e^2$) for small residuals $|e| \le \delta$, but switches to linear ($\delta(|e| - \frac{1}{2}\delta)$) for large errors, preventing outliers from dominating.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <h3 class="feature-title">2. Theil-Sen Estimator</h3>
+                    <p class="feature-desc">
+                        Computes the median of all pairwise slopes $\frac{y_j - y_i}{x_j - x_i}$. It has a high breakdown point of <strong>29.3%</strong>, meaning it can tolerate nearly a third of all data points being corrupted without skewing.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <h3 class="feature-title">3. RANSAC (Random Sample Consensus)</h3>
+                    <p class="feature-desc">
+                        Iteratively fits models to minimal random subsets of data (2 points in simple regression), counts the inliers within an error threshold, and returns the model supported by the largest consensus set.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-inner">
+            <div class="footer-brand">
+                <a href="../../index.html" class="nav-brand">
+                    <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 3v18h18" />
+                        <path d="M7 16c2.5-4 5.5-10 8-10s3 8 5 8" />
+                    </svg>
+                    <span class="brand-name">ds<span class="brand-dot">.</span>sim</span>
+                </a>
+                <p class="footer-tagline">Interactive statistical and machine learning intuition in your browser.</p>
+            </div>
+            <div class="footer-nav">
+                <div class="footer-nav-col">
+                    <span class="footer-nav-title">Simulations</span>
+                    <a href="../kmeans-clustering/index.html" class="footer-nav-link">K-Means Clustering</a>
+                    <a href="../knn-classification/index.html" class="footer-nav-link">KNN Boundaries</a>
+                    <a href="../linear-regression/index.html" class="footer-nav-link">Linear Regression</a>
+                    <a href="../confidence-intervals/index.html" class="footer-nav-link">Confidence Intervals</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+    <script type="module">
+        import init from './simulation.js';
+        init();
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '$', right: '$', display: false }
+            ]
+        });
+    </script>
+</body>
+</html>
+

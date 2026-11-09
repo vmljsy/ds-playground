@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Means Clustering (Lloyd's Algorithm) — ds.sim</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fafafa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='3'/><circle cx='19' cy='5' r='2'/><circle cx='5' cy='19' r='2'/><path d='M10 14 6 18'/><path d='m14 10 4-4'/></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container nav-container">
+            <a href="../../index.html" class="nav-brand">
+                <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 3v18h18" />
+                    <path d="M7 16c2.5-4 5.5-10 8-10s3 8 5 8" />
+                </svg>
+                <span class="brand-name">ds<span class="brand-dot">.</span>sim</span>
+            </a>
+            <div class="breadcrumb">
+                <a href="../../index.html">Home</a>
+                <span class="breadcrumb-sep">/</span>
+                <a href="../../index.html#experiments">Experiments</a>
+                <span class="breadcrumb-sep">/</span>
+                <span class="breadcrumb-current">K-Means Clustering</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <!-- 1. Header -->
+        <header class="experiment-header">
+            <div class="hero-pill" style="margin-bottom: 1rem;">
+                <span class="hero-pill-indicator"></span>
+                <span>Unsupervised Machine Learning &middot; Clustering</span>
+            </div>
+            <h1>K-Means Clustering &amp; Lloyd's Algorithm</h1>
+            <p class="subtitle">Step-by-step frame-by-frame visualization of Voronoi point assignments and centroid convergence</p>
+        </header>
+
+        <!-- 2. Theory Section -->
+        <div class="theory-box">
+            <h3>Lloyd's Heuristic &amp; Within-Cluster Sum of Squares (WCSS)</h3>
+            <p>
+                Given $n$ observations $\mathbf{x}_1, \dots, \mathbf{x}_n \in \mathbb{R}^d$, $K$-Means partitions the observations into $K$ sets $S = \{S_1, S_2, \dots, S_K\}$ to minimize the within-cluster sum of squares (also called <strong>inertia</strong>):
+            </p>
+            <p>
+                $$\arg\min_{S} \sum_{j=1}^{K} \sum_{\mathbf{x} \in S_j} \|\mathbf{x} - \boldsymbol{\mu}_j\|^2$$
+            </p>
+            <p>
+                Because finding the global minimum is NP-hard, Lloyd's algorithm alternates between two coordinate-descent steps:
+            </p>
+            <ul style="margin-left: 1.5rem; margin-top: 0.5rem; line-height: 1.8;">
+                <li><strong>Step 1 (Assignment):</strong> Assign each sample point $\mathbf{x}_i$ to its closest centroid in Euclidean space:
+                    $$S_j^{(t)} = \left\{ \mathbf{x}_p : \|\mathbf{x}_p - \boldsymbol{\mu}_j^{(t)}\|^2 \le \|\mathbf{x}_p - \boldsymbol{\mu}_{j^*}^{(t)}\|^2 \quad \forall j^* \right\}$$
+                </li>
+                <li><strong>Step 2 (Update):</strong> Recalculate centroids as the center of mass (arithmetic mean) of assigned points:
+                    $$\boldsymbol{\mu}_j^{(t+1)} = \frac{1}{|S_j^{(t)}|} \sum_{\mathbf{x}_i \in S_j^{(t)}} \mathbf{x}_i$$
+                </li>
+            </ul>
+        </div>
+
+        <!-- 3. Interactive Workbench (Sidebar + Main Layout) -->
+        <section class="section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <h2>Interactive Clustering Workbench</h2>
+                <span class="badge badge-outline" id="badge-status">Ready</span>
+            </div>
+
+            <div class="sim-layout">
+
+                <!-- Sidebar Parameter Controls -->
+                <aside class="sim-sidebar">
+
+                    <div class="controls-panel" style="margin-bottom: 0;">
+                        <div class="controls-panel-title">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="19" cy="5" r="2"/><circle cx="5" cy="19" r="2"/></svg>
+                            <span>Model Parameters</span>
+                        </div>
+
+                        <!-- Number of Clusters K -->
+                        <div class="control-group">
+                            <label for="k-slider">
+                                <span>Number of Clusters (K)</span>
+                                <span class="control-value" id="k-display">3</span>
+                            </label>
+                            <input type="range" id="k-slider" min="1" max="7" value="3" step="1">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.25rem;">
+                                <span style="font-size: 0.75rem; color: var(--muted-subtle);">Direct input:</span>
+                                <input type="number" id="k-input" min="1" max="7" value="3" style="width: 70px; padding: 0.25rem 0.5rem; text-align: center; font-size: 0.8125rem;">
+                            </div>
+                        </div>
+
+                        <!-- Dataset Preset -->
+                        <div class="control-group">
+                            <label for="preset-select">Dataset Distribution</label>
+                            <select id="preset-select">
+                                <option value="gaussian3" selected>3 Gaussian Blobs (~100 pts)</option>
+                                <option value="clusters4">4 Quadrant Clusters (~100 pts)</option>
+                                <option value="concentric">Concentric Rings (Non-Spherical)</option>
+                                <option value="uniform">Uniform Random Scatter</option>
+                            </select>
+                        </div>
+
+                        <!-- Initialization Strategy -->
+                        <div class="control-group">
+                            <label for="init-method-select">Centroid Initialization</label>
+                            <select id="init-method-select">
+                                <option value="random" selected>Standard Random Placement</option>
+                                <option value="kmeanspp">K-Means++ (D² Distance Seeding)</option>
+                            </select>
+                        </div>
+
+                        <!-- Animation Speed -->
+                        <div class="control-group">
+                            <label for="speed-slider">
+                                <span>Step Delay</span>
+                                <span class="control-value" id="speed-value">600ms</span>
+                            </label>
+                            <input type="range" id="speed-slider" min="200" max="1500" value="600" step="50">
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                            <button id="btn-init" class="btn btn-secondary btn-sm" style="width: 100%;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                                <span>Initialize Random Centroids</span>
+                            </button>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                                <button id="btn-assign" class="btn btn-outline btn-sm" title="Compute nearest centroid for every point">
+                                    <span>Step 1: Assign</span>
+                                </button>
+                                <button id="btn-move" class="btn btn-outline btn-sm" title="Recompute centroids as mean of assigned points">
+                                    <span>Step 2: Move</span>
+                                </button>
+                            </div>
+
+                            <button id="btn-autorun" class="btn btn-primary btn-sm" style="width: 100%;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                <span>Auto-Run (Animate)</span>
+                            </button>
+
+                            <button id="btn-reset" class="btn btn-ghost btn-sm" style="width: 100%;">
+                                <span>Reset Data</span>
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <!-- Live Convergence & Inertia Panel -->
+                    <div class="stats-panel-card">
+                        <div class="stats-panel-title">
+                            <span>Optimization Metrics</span>
+                            <span class="badge badge-secondary" style="font-size: 0.6875rem;">Live</span>
+                        </div>
+
+                        <div class="stats-row">
+                            <span class="stats-row-label">Current Phase</span>
+                            <span class="stats-row-value" id="stat-phase">Ready</span>
+                        </div>
+
+                        <div class="stats-row">
+                            <span class="stats-row-label">Iteration (t)</span>
+                            <span class="stats-row-value" id="stat-iter">0</span>
+                        </div>
+
+                        <div class="stats-row">
+                            <span class="stats-row-label">Active K</span>
+                            <span class="stats-row-value" id="stat-k">3</span>
+                        </div>
+
+                        <div class="stats-row">
+                            <span class="stats-row-label">Inertia (WCSS)</span>
+                            <span class="stats-row-value" id="stat-wcss" style="color: var(--chart-blue);">0.0</span>
+                        </div>
+
+                        <div class="stats-row">
+                            <span class="stats-row-label">Centroid Max Shift (Δ)</span>
+                            <span class="stats-row-value" id="stat-shift">0.000</span>
+                        </div>
+
+                        <!-- Cluster sizes breakdown -->
+                        <div style="margin-top: 0.85rem; padding-top: 0.65rem; border-top: 1px solid var(--border-subtle);">
+                            <div style="font-size: 0.75rem; color: var(--muted-foreground); text-transform: uppercase; margin-bottom: 0.35rem; font-family: var(--font-mono);">
+                                Cluster Membership
+                            </div>
+                            <div id="cluster-breakdown">
+                                <!-- Populated dynamically by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                </aside>
+
+                <!-- Main Plotly Visualization Area -->
+                <div class="sim-main">
+                    
+                    <div class="chart-container" style="padding: 1rem; position: relative;">
+                        <div id="kmeans-plot" style="width: 100%; min-height: 520px;"></div>
+                        <div style="position: absolute; bottom: 1.25rem; left: 1.25rem; font-size: 0.75rem; color: var(--muted-subtle); background: rgba(9,9,11,0.7); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                            Tip: Click anywhere inside the canvas to add custom observations
+                        </div>
+                    </div>
+
+                    <!-- Step-by-Step Educational Cards -->
+                    <div class="grid-2">
+                        <div class="info-box">
+                            <strong>Why Lloyd's Algorithm Guarantees Convergence</strong><br>
+                            At each step, WCSS either strictly decreases or remains constant. Because there are only finitely many ($K^n$) possible cluster assignments, the algorithm cannot loop indefinitely and must converge to a local minimum in a finite number of iterations.
+                        </div>
+
+                        <div class="warning-box">
+                            <strong>The Curse of Local Minima &amp; K-Means++</strong><br>
+                            Standard random initialization can get trapped in sub-optimal configurations (e.g. two centroids in one true cluster while another cluster is split). <strong>K-Means++</strong> solves this by spreading out initial centroids proportional to squared distance $D(\mathbf{x})^2$, providing an $O(\log K)$ approximation guarantee!
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- 4. Deep Dive Theory -->
+        <section class="section" style="border-top: 1px solid var(--border); padding-top: 2rem;">
+            <h2>Key Principles &amp; Common Fallacies</h2>
+
+            <div class="grid-3" style="margin-top: 1.25rem;">
+                <div class="feature-card">
+                    <h3 class="feature-title">1. Assumption of Spherical Clusters</h3>
+                    <p class="feature-desc">
+                        K-Means implicitly assumes clusters are convex, isotropic (spherical), and equally sized. Try the <strong>Concentric Rings</strong> preset to see K-Means fail on non-linearly separable geometries where spectral clustering or DBSCAN is required.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <h3 class="feature-title">2. Determining K (The Elbow Heuristic)</h3>
+                    <p class="feature-desc">
+                        Inertia always decreases as $K$ increases (dropping to zero when $K=n$). The <em>Elbow Method</em> plots WCSS vs $K$ and picks the point where the marginal decrease suddenly flattens.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <h3 class="feature-title">3. Feature Scaling Requirement</h3>
+                    <p class="feature-desc">
+                        Because cluster assignments rely on Euclidean distance $\|\mathbf{x} - \boldsymbol{\mu}\|^2$, features with larger numeric scales dominate the metric. In practice, standardize data ($\mu=0, \sigma=1$) before running K-Means.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-inner">
+            <div class="footer-brand">
+                <a href="../../index.html" class="nav-brand">
+                    <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 3v18h18" />
+                        <path d="M7 16c2.5-4 5.5-10 8-10s3 8 5 8" />
+                    </svg>
+                    <span class="brand-name">ds<span class="brand-dot">.</span>sim</span>
+                </a>
+                <p class="footer-tagline">Interactive statistical and machine learning intuition in your browser.</p>
+            </div>
+            <div class="footer-nav">
+                <div class="footer-nav-col">
+                    <span class="footer-nav-title">Simulations</span>
+                    <a href="../kmeans-clustering/index.html" class="footer-nav-link">K-Means Clustering</a>
+                    <a href="../knn-classification/index.html" class="footer-nav-link">KNN Boundaries</a>
+                    <a href="../linear-regression/index.html" class="footer-nav-link">Linear Regression</a>
+                    <a href="../confidence-intervals/index.html" class="footer-nav-link">Confidence Intervals</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+    <script type="module">
+        import init from './simulation.js';
+        init();
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '$', right: '$', display: false }
+            ]
+        });
+    </script>
+</body>
+</html>
+
