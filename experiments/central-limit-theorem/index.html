@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central Limit Theorem — DS Simulations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container nav-container">
+            <a href="../../index.html" class="nav-brand">📊 DS Simulations</a>
+            <div class="breadcrumb">
+                <a href="../../index.html">Home</a>
+                <span class="breadcrumb-sep">/</span>
+                <a href="../../index.html#experiments">Experiments</a>
+                <span class="breadcrumb-sep">/</span>
+                <span class="breadcrumb-current">Central Limit Theorem</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <!-- 1. Experiment Header -->
+        <header class="experiment-header">
+            <h1>Central Limit Theorem</h1>
+            <p class="subtitle">Explore how sample means converge to a normal distribution</p>
+        </header>
+
+        <!-- 2. Theory Section -->
+        <div class="theory-box">
+            <h3>Statement</h3>
+            <p>
+                Let $X_1, X_2, \dots, X_n$ be i.i.d. random variables with mean $\mu$ and finite
+                standard deviation $\sigma$. Then as $n \to \infty$:
+            </p>
+            <p>
+                $$\frac{\bar{X}_n - \mu}{\sigma / \sqrt{n}} \xrightarrow{d} N(0, 1)$$
+            </p>
+            <h3>In Plain English</h3>
+            <blockquote>
+                No matter the shape of the population, the distribution of sample means will be
+                approximately normal for large enough sample sizes, centered at μ with standard
+                error σ/√n.
+            </blockquote>
+        </div>
+
+        <!-- 3. Interactive Simulation Section -->
+        <section class="section">
+            <h2>Interactive Simulation</h2>
+
+            <!-- Controls Panel -->
+            <div class="controls-panel">
+                <div class="control-group">
+                    <label for="dist-select">Population Distribution</label>
+                    <select id="dist-select">
+                        <option value="exponential">Exponential</option>
+                        <option value="uniform">Uniform</option>
+                        <option value="bimodal">Bimodal</option>
+                        <option value="poisson">Poisson</option>
+                        <option value="beta_ushaped">Beta U-shaped</option>
+                        <option value="dice">Fair Die 🎲</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="sample-size-slider">Sample Size (n): <span id="sample-size-value">30</span></label>
+                    <input type="range" id="sample-size-slider" min="1" max="200" value="30" step="1">
+                </div>
+
+                <div class="control-group">
+                    <label for="num-samples-slider">Number of Samples: <span id="num-samples-value">1000</span></label>
+                    <input type="range" id="num-samples-slider" min="100" max="10000" value="1000" step="100">
+                </div>
+
+                <div class="btn-group">
+                    <button id="btn-run" class="btn">▶ Run Simulation</button>
+                    <button id="btn-animate" class="btn btn-outline">🎬 Animate</button>
+                    <button id="btn-reset" class="btn btn-outline">🔄 Reset</button>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="chart-row">
+                <div id="population-chart" class="chart-container" style="min-height: 400px;"></div>
+                <div id="sampling-chart" class="chart-container" style="min-height: 400px;"></div>
+            </div>
+
+            <!-- Statistics Panel -->
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span class="stat-label">Population Mean (μ)</span>
+                    <span class="stat-value" id="stat-pop-mean">—</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Population Std (σ)</span>
+                    <span class="stat-value" id="stat-pop-std">—</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Mean of X̄</span>
+                    <span class="stat-value" id="stat-sample-mean">—</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Empirical SE</span>
+                    <span class="stat-value" id="stat-empirical-se">—</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Theoretical SE (σ/√n)</span>
+                    <span class="stat-value" id="stat-theoretical-se">—</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Ratio (≈ 1.00)</span>
+                    <span class="stat-value" id="stat-ratio">—</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. How It Works Section -->
+        <section class="section">
+            <h2>How It Works</h2>
+            <ol class="how-it-works-list">
+                <li><strong>Choose a population</strong>: Select any distribution — skewed, flat, bimodal, or discrete</li>
+                <li><strong>Set sample size (n)</strong>: This is how many observations are in each random sample</li>
+                <li><strong>Draw many samples</strong>: We draw thousands of samples and compute the mean of each one</li>
+                <li><strong>Watch the magic</strong>: The distribution of those sample means forms a bell curve — that's the CLT!</li>
+            </ol>
+        </section>
+
+        <!-- 5. Key Insights Section -->
+        <section class="section">
+            <h2>Key Insights</h2>
+
+            <div class="info-box">
+                <strong>Sample size matters</strong>: Larger n → better normal approximation AND narrower spread (SE = σ/√n)
+            </div>
+
+            <div class="info-box">
+                <strong>Symmetry helps</strong>: Symmetric populations (like Uniform) converge faster than highly skewed ones (like Exponential)
+            </div>
+
+            <div class="info-box">
+                <strong>It works for discrete too</strong>: Even dice rolls produce normally-distributed means!
+            </div>
+
+            <div class="warning-box">
+                <strong>When CLT fails</strong>: The CLT requires finite variance. Heavy-tailed distributions like the Cauchy distribution do not satisfy this — their sample means never converge to normal.
+            </div>
+        </section>
+
+        <!-- 6. Why It Matters Section -->
+        <section class="section">
+            <h2>Why It Matters</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Application</th>
+                            <th>How CLT helps</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Confidence Intervals</td>
+                            <td>Build intervals using the normal distribution</td>
+                        </tr>
+                        <tr>
+                            <td>Hypothesis Testing</td>
+                            <td>z-tests and t-tests rely on normality of X̄</td>
+                        </tr>
+                        <tr>
+                            <td>Quality Control</td>
+                            <td>Control charts assume sample means are normal</td>
+                        </tr>
+                        <tr>
+                            <td>Polling &amp; Surveys</td>
+                            <td>Margin of error calculations</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>Built for learning. <a href="../../index.html">← Back to Home</a></p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+    <script type="module">
+        import init from './simulation.js';
+        init();
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '$', right: '$', display: false }
+            ]
+        });
+    </script>
+
+</body>
+</html>

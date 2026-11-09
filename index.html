@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Interactive data science simulations — build your intuition for statistics, probability, and machine learning concepts through hands-on experiments.">
+  <title>DS Simulations — Interactive Data Science Experiments</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="container nav-container">
+      <a href="/" class="nav-brand">📊 DS Simulations</a>
+      <div class="nav-links">
+        <a href="#experiments" class="nav-link">Experiments</a>
+        <a href="#about" class="nav-link">About</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <h1 class="hero-title"><span class="gradient-text">Data Science Simulations</span></h1>
+      <p class="hero-subtitle">Interactive visualizations to build your intuition for statistics, probability, and machine learning concepts.</p>
+      <p class="hero-tagline">Learn by experimenting. No setup required.</p>
+    </div>
+  </section>
+
+  <!-- Experiments Grid -->
+  <section class="section" id="experiments">
+    <div class="container">
+      <h2 class="section-title">Experiments <span class="section-count">(1 available)</span></h2>
+      <div class="grid-3">
+
+        <!-- Card 1: Central Limit Theorem (Active) -->
+        <a href="experiments/central-limit-theorem/index.html" class="experiment-card">
+          <div class="card-icon">📊</div>
+          <h3 class="card-title">Central Limit Theorem</h3>
+          <p class="card-description">See how the distribution of sample means converges to a normal distribution — no matter what the population looks like.</p>
+          <div class="card-tags">
+            <span class="card-tag">Statistics</span>
+            <span class="card-tag">Probability</span>
+            <span class="card-tag">Interactive</span>
+          </div>
+        </a>
+
+        <!-- Card 2: Law of Large Numbers (Coming Soon) -->
+        <div class="experiment-card coming-soon">
+          <div class="card-badge">Coming Soon</div>
+          <div class="card-icon">🎲</div>
+          <h3 class="card-title">Law of Large Numbers</h3>
+          <p class="card-description">Watch how sample averages stabilize as you increase the number of trials.</p>
+          <div class="card-tags">
+            <span class="card-tag">Probability</span>
+            <span class="card-tag">Convergence</span>
+          </div>
+        </div>
+
+        <!-- Card 3: Linear Regression (Coming Soon) -->
+        <div class="experiment-card coming-soon">
+          <div class="card-badge">Coming Soon</div>
+          <div class="card-icon">📈</div>
+          <h3 class="card-title">Linear Regression</h3>
+          <p class="card-description">Fit lines to data interactively and understand least squares, residuals, and R².</p>
+          <div class="card-tags">
+            <span class="card-tag">Machine Learning</span>
+            <span class="card-tag">Regression</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="section" id="about">
+    <div class="container">
+      <h2 class="section-title">About</h2>
+      <p class="about-text">DS Simulations is a collection of interactive experiments designed to help you build deep intuition for data science concepts. Each simulation lets you tweak parameters, visualize results in real-time, and understand the theory behind the math.</p>
+      <p class="about-text">Built as a static site — runs entirely in your browser. No backend needed.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>Built with curiosity 🚀</p>
+      <p class="footer-powered">Powered by Plotly.js &amp; KaTeX</p>
+    </div>
+  </footer>
+
+<!-- 
+  HOW TO ADD A NEW EXPERIMENT:
+  1. Create a new folder: experiments/your-experiment-name/
+  2. Add index.html (copy from an existing experiment as template)
+  3. Add simulation.js with your experiment logic
+  4. Add a card to this page's experiments grid
+  5. Update the experiment count in the section title
+-->
+
+</body>
+</html>
