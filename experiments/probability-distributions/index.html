@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Probability Distributions — ds.sim</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fafafa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M3 3v18h18'/><path d='M7 16c2.5-4 5.5-10 8-10s3 8 5 8'/></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container nav-container">
+            <a href="../../index.html" class="nav-brand">
+                <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 3v18h18" />
+                    <path d="M7 16c2.5-4 5.5-10 8-10s3 8 5 8" />
+                </svg>
+                <span class="brand-name">ds<span class="brand-dot">.</span>sim</span>
+            </a>
+            <div class="breadcrumb">
+                <a href="../../index.html">Home</a>
+                <span class="breadcrumb-sep">/</span>
+                <a href="../../index.html#experiments">Experiments</a>
+                <span class="breadcrumb-sep">/</span>
+                <span class="breadcrumb-current">Probability Distributions</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <!-- 1. Header -->
+        <header class="experiment-header">
+            <div class="hero-pill" style="margin-bottom: 1rem;">
+                <span class="hero-pill-indicator"></span>
+                <span>Foundational Statistical Mechanics</span>
+            </div>
+            <h1>Common Probability Distributions</h1>
+            <p class="subtitle">Interactive visual catalog of key continuous and discrete distributions in data science</p>
+        </header>
+
+        <!-- 2. Theory Overview -->
+        <div class="theory-box">
+            <h3>Probability Density vs Mass</h3>
+            <p>
+                A <strong>probability distribution</strong> defines how likelihood is allocated over the possible outcomes of a random variable $X$.
+                Continuous variables possess a <strong>Probability Density Function (PDF)</strong> $f(x)$ where probabilities correspond to integrals over intervals:
+            </p>
+            <p>
+                $$P(a \le X \le b) = \int_a^b f(x)\,dx, \quad F(x) = P(X \le x) = \int_{-\infty}^x f(t)\,dt$$
+            </p>
+            <p>
+                Discrete variables possess a <strong>Probability Mass Function (PMF)</strong> $p(k) = P(X = k)$ where probabilities sum directly: $\sum_k p(k) = 1$.
+            </p>
+        </div>
+
+        <!-- 3. Interactive Workbench -->
+        <section class="section">
+            <h2>Distribution Workbench</h2>
+
+            <div class="controls-panel">
+                <div class="controls-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; width: 100%;">
+                    
+                    <div class="control-group">
+                        <label for="dist-select">Select Distribution</label>
+                        <select id="dist-select">
+                            <option value="normal" selected>Normal (Gaussian)</option>
+                            <option value="student_t">Student's t-Distribution</option>
+                            <option value="binomial">Binomial (Discrete)</option>
+                            <option value="poisson">Poisson (Discrete)</option>
+                            <option value="exponential">Exponential</option>
+                            <option value="chisquare">Chi-Square (χ²)</option>
+                            <option value="uniform">Continuous Uniform</option>
+                            <option value="lognormal">Log-Normal</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="preset-select">Real-World Scenario Preset</label>
+                        <select id="preset-select">
+                            <option value="custom">— Custom Parameters —</option>
+                            <option value="standard_normal">Standard Normal Baseline (Z ~ N(0, 1))</option>
+                            <option value="small_sample_t">Small Sample Inference (t, df=4, Heavy Tails)</option>
+                            <option value="ab_conversion">A/B Test Signups (Binomial: n=50, p=0.15)</option>
+                            <option value="server_requests">Web Server Hit Volume (Poisson: λ=12 / sec)</option>
+                            <option value="customer_wait">Support Call Waiting Time (Exponential: λ=0.2 / min)</option>
+                            <option value="goodness_fit">Chi-Square Independence Test (χ², df=3)</option>
+                            <option value="page_latency">Cloud Endpoint Latency (Log-Normal)</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <!-- Dynamic Parameter Controls Container -->
+                <div id="dynamic-params" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; width: 100%; padding-top: 0.5rem; border-top: 1px solid var(--border);">
+                    <!-- Injected dynamically by simulation.js -->
+                </div>
+
+                <!-- Range Shading Calculator -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; width: 100%; padding-top: 0.5rem; border-top: 1px solid var(--border);">
+                    <div class="control-group">
+                        <label for="range-lower">Lower Bound ($x_1$): <span id="val-range-lower">-1.96</span></label>
+                        <input type="range" id="range-lower" min="-5" max="5" step="0.05" value="-1.96">
+                    </div>
+                    <div class="control-group">
+                        <label for="range-upper">Upper Bound ($x_2$): <span id="val-range-upper">1.96</span></label>
+                        <input type="range" id="range-upper" min="-5" max="5" step="0.05" value="1.96">
+                    </div>
+                    <div class="control-group" style="display: flex; align-items: flex-end;">
+                        <button id="btn-reset-range" class="btn btn-outline btn-sm" style="width: 100%;">Reset to [-1.96, +1.96]</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Plots Row -->
+            <div class="chart-row">
+                <div class="chart-container">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600; font-size: 0.875rem;" id="chart-pdf-title">Density / Mass Function (PDF / PMF)</span>
+                        <span class="badge badge-outline" id="badge-dist-type">Continuous</span>
+                    </div>
+                    <div id="plot-pdf" style="min-height: 380px;"></div>
+                </div>
+
+                <div class="chart-container">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600; font-size: 0.875rem;">Cumulative Distribution Function (CDF)</span>
+                        <span style="font-size: 0.75rem; color: var(--muted-foreground);" id="cdf-hint">P(X ≤ x)</span>
+                    </div>
+                    <div id="plot-cdf" style="min-height: 380px;"></div>
+                </div>
+            </div>
+
+            <!-- Mathematical Summary & Metrics Grid -->
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span class="stat-label">Interval Probability P(x₁ ≤ X ≤ x₂)</span>
+                    <span class="stat-value" id="stat-interval-prob" style="color: var(--chart-blue);">0.9500</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Expected Value E[X] (Mean)</span>
+                    <span class="stat-value" id="stat-mean">0.000</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Variance Var(X)</span>
+                    <span class="stat-value" id="stat-variance">1.000</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Standard Deviation (σ)</span>
+                    <span class="stat-value" id="stat-std">1.000</span>
+                </div>
+            </div>
+
+            <!-- Formula & Application Card -->
+            <div style="margin-top: 1.5rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem;">
+                
+                <div class="theory-box" style="margin-bottom: 0;">
+                    <h3 id="formula-title">Mathematical Formula</h3>
+                    <div id="formula-math" style="font-size: 1.05rem; padding: 0.75rem 0;">
+                        <!-- Injected by simulation.js -->
+                    </div>
+                    <p id="formula-params" style="font-size: 0.8125rem; color: var(--muted-foreground); margin-top: 0.5rem;"></p>
+                </div>
+
+                <div class="theory-box" style="margin-bottom: 0;">
+                    <h3>Real-World Applications in Data Science</h3>
+                    <p id="application-desc" style="font-size: 0.875rem; line-height: 1.6; color: var(--muted-foreground);">
+                        <!-- Injected by simulation.js -->
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- 4. Quick Reference Matrix -->
+        <section class="section">
+            <h2>Distribution Decision Matrix</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Distribution</th>
+                            <th>Type</th>
+                            <th>Support</th>
+                            <th>Primary Use Cases in Practice</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Normal (Gaussian)</strong></td>
+                            <td>Continuous</td>
+                            <td>$(-\infty, +\infty)$</td>
+                            <td>Central Limit Theorem, linear model residuals, baseline statistical inference ($z$-tests).</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Student's $t$</strong></td>
+                            <td>Continuous</td>
+                            <td>$(-\infty, +\infty)$</td>
+                            <td>Small sample mean inference when population variance $\sigma$ is unknown ($t$-tests).</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Binomial</strong></td>
+                            <td>Discrete</td>
+                            <td>$\{0, 1, \dots, n\}$</td>
+                            <td>A/B testing click-through rates, binary conversion tracking, coin flips.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Poisson</strong></td>
+                            <td>Discrete</td>
+                            <td>$\{0, 1, 2, \dots\}$</td>
+                            <td>Call arrivals, server request rates, rare defect counting per unit interval.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Exponential</strong></td>
+                            <td>Continuous</td>
+                            <td>$[0, +\infty)$</td>
+                            <td>Time between events, customer churn duration, survival analysis, memoryless decay.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Chi-Square ($\chi^2$)</strong></td>
+                            <td>Continuous</td>
+                            <td>$[0, +\infty)$</td>
+                            <td>Goodness-of-fit tests, contingency table independence, sample variance distribution.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Log-Normal</strong></td>
+                            <td>Continuous</td>
+                            <td>$(0, +\infty)$</td>
+                            <td>Network latency, personal income / financial wealth, file size distributions.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-inner">
+            <div class="footer-brand">
+                <a href="../../index.html" class="nav-brand">
+                    <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 3v18h18" />
+                        <path d="M7 16c2.5-4 5.5-10 8-10s3 8 5 8" />
+                    </svg>
+                    <span class="brand-name">ds<span class="brand-dot">.</span>sim</span>
+                </a>
+                <p class="footer-tagline">Interactive statistical and machine learning simulations. Client-rendered &amp; open source.</p>
+            </div>
+            <div class="footer-nav">
+                <div class="footer-nav-col">
+                    <span class="footer-nav-title">Navigation</span>
+                    <a href="../../index.html" class="footer-nav-link">Home</a>
+                    <a href="../central-limit-theorem/index.html" class="footer-nav-link">Central Limit Theorem</a>
+                    <a href="../law-of-large-numbers/index.html" class="footer-nav-link">Law of Large Numbers</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+    <script type="module">
+        import init from './simulation.js';
+        init();
+        if (window.renderMathInElement) {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    { left: '$$', right: '$$', display: true },
+                    { left: '$', right: '$', display: false }
+                ]
+            });
+        }
+    </script>
+</body>
+</html>
+

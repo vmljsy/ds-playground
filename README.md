@@ -10,6 +10,10 @@ Interactive data science simulations — learn statistics, probability, and ML c
 |---|---|---|
 | [Central Limit Theorem](experiments/central-limit-theorem/) | ✅ Live | See how sample means converge to a normal distribution |
 | [Law of Large Numbers](experiments/law-of-large-numbers/) | ✅ Live | Watch sample averages stabilize as trials increase across multiple paths |
+| [Probability Distributions](experiments/probability-distributions/) | ✅ Live | Interactive catalog of key continuous & discrete distributions (Normal, t, Binomial, Poisson, χ², Exp) |
+| [Confidence Intervals](experiments/confidence-intervals/) | ✅ Live | Visual intuition for frequentist repeated sampling coverage and margin of error mechanics |
+| [Hypothesis Testing](experiments/hypothesis-testing/) | ✅ Live | Interactive z-test & t-test workbench with critical values, rejection regions, p-values & power |
+| [A/B Testing](experiments/ab-testing/) | ✅ Live | Conversion lift, two-proportion z-tests, Welch's t-tests, difference CIs & sequential peeking tracking |
 | Linear Regression | 🔜 Coming soon | Interactive least squares fitting |
 
 ## Tech Stack

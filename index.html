@@ -127,13 +127,13 @@
         <!-- shadcn Filter Tabs -->
         <div class="tabs-list" role="tablist">
           <button class="tabs-trigger active" data-filter="all">
-            All <span class="tab-count">3</span>
+            All <span class="tab-count">7</span>
           </button>
           <button class="tabs-trigger" data-filter="probability">
-            Probability <span class="tab-count">2</span>
+            Probability <span class="tab-count">3</span>
           </button>
           <button class="tabs-trigger" data-filter="statistics">
-            Statistics <span class="tab-count">1</span>
+            Statistics <span class="tab-count">6</span>
           </button>
           <button class="tabs-trigger" data-filter="ml">
             ML <span class="tab-count">1</span>
@@ -166,10 +166,8 @@
                   <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.0"/>
                 </linearGradient>
               </defs>
-              <!-- Grid lines -->
               <line x1="20" y1="105" x2="280" y2="105" stroke="#27272a" stroke-width="1"/>
               <line x1="150" y1="15" x2="150" y2="105" stroke="#27272a" stroke-dasharray="2 2" stroke-width="1"/>
-              <!-- Background population discrete bars -->
               <rect x="35" y="85" width="16" height="20" rx="1.5" fill="#18181b" stroke="#27272a"/>
               <rect x="55" y="70" width="16" height="35" rx="1.5" fill="#18181b" stroke="#27272a"/>
               <rect x="75" y="55" width="16" height="50" rx="1.5" fill="#18181b" stroke="#27272a"/>
@@ -181,10 +179,8 @@
               <rect x="195" y="65" width="16" height="40" rx="1.5" fill="#18181b" stroke="#27272a"/>
               <rect x="215" y="82" width="16" height="23" rx="1.5" fill="#18181b" stroke="#27272a"/>
               <rect x="235" y="95" width="16" height="10" rx="1.5" fill="#18181b" stroke="#27272a"/>
-              <!-- Smooth Gaussian Bell Curve -->
               <path d="M 30 104 C 80 104, 110 95, 130 55 C 142 30, 150 20, 150 20 C 150 20, 158 30, 170 55 C 190 95, 220 104, 270 104" stroke="#38bdf8" stroke-width="2" fill="none"/>
               <path d="M 30 104 C 80 104, 110 95, 130 55 C 142 30, 150 20, 150 20 C 150 20, 158 30, 170 55 C 190 95, 220 104, 270 104 L 270 105 L 30 105 Z" fill="url(#cltGrad)"/>
-              <!-- Mean Indicator -->
               <line x1="150" y1="18" x2="150" y2="105" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3 3"/>
               <circle cx="150" cy="20" r="3" fill="#f59e0b"/>
             </svg>
@@ -230,15 +226,11 @@
           <!-- SVG Visual Preview: Multiple Stochastic Paths Converging -->
           <div class="card-visual">
             <svg viewBox="0 0 300 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <!-- Grid & Benchmark -->
               <line x1="20" y1="105" x2="280" y2="105" stroke="#27272a" stroke-width="1"/>
               <line x1="20" y1="60" x2="280" y2="60" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="4 4"/>
               <text x="24" y="54" fill="#a1a1aa" font-family="'Geist Mono', monospace" font-size="9">E[X] = μ</text>
-              <!-- Path 1 (Blue) -->
               <path d="M 25 20 Q 50 85, 80 50 T 130 68 T 180 57 T 230 61 T 275 60" stroke="#38bdf8" stroke-width="1.75" fill="none"/>
-              <!-- Path 2 (Emerald) -->
               <path d="M 25 95 Q 55 30, 90 75 T 140 55 T 190 62 T 240 59 T 275 60" stroke="#10b981" stroke-width="1.75" fill="none"/>
-              <!-- Path 3 (Rose) -->
               <path d="M 25 50 Q 60 100, 100 45 T 150 65 T 200 58 T 250 61 T 275 60" stroke="#f43f5e" stroke-width="1.5" stroke-opacity="0.8" fill="none"/>
             </svg>
           </div>
@@ -266,12 +258,231 @@
           </div>
         </a>
 
-        <!-- Card 3: Linear Regression (Coming Soon) -->
-        <div class="experiment-card coming-soon" data-category="ml statistics">
+        <!-- Card 3: Probability Distributions -->
+        <a href="experiments/probability-distributions/index.html" class="experiment-card" data-category="probability statistics">
           <div class="card-header">
             <div class="card-meta">
               <div class="card-meta-left">
                 <span class="badge badge-outline">EXP-03</span>
+                <span class="badge badge-secondary">Distributions</span>
+              </div>
+              <span class="status-indicator"><span class="status-dot"></span> Live</span>
+            </div>
+            <h3 class="card-title">Common Probability Distributions</h3>
+            <p class="card-description">Interactive catalog of continuous &amp; discrete distributions: Normal, Student's t, Binomial, Poisson, Chi-Square, and Exponential.</p>
+          </div>
+
+          <!-- SVG Visual Preview: Normal vs Heavy-Tailed Student's t Curve -->
+          <div class="card-visual">
+            <svg viewBox="0 0 300 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="20" y1="105" x2="280" y2="105" stroke="#27272a" stroke-width="1"/>
+              <!-- Student's t (amber, heavier tails) -->
+              <path d="M 25 102 C 80 100, 115 80, 150 35 C 185 80, 220 100, 275 102" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3 3" fill="none"/>
+              <!-- Gaussian normal (cyan, taller peak) -->
+              <path d="M 25 104 C 80 104, 120 85, 150 20 C 180 85, 220 104, 275 104" stroke="#38bdf8" stroke-width="2" fill="none"/>
+              <text x="30" y="30" fill="#38bdf8" font-family="'Geist Mono', monospace" font-size="9">Normal N(0,1)</text>
+              <text x="30" y="44" fill="#f59e0b" font-family="'Geist Mono', monospace" font-size="9">Student's t(ν=4)</text>
+            </svg>
+          </div>
+
+          <div class="card-content">
+            <div class="formula-box">
+              <code>P(a ≤ X ≤ b) = ∫ f(x) dx</code>
+              <span class="formula-label">Density</span>
+            </div>
+            <div class="card-specs">
+              <div class="spec-item">
+                <span class="spec-label">Distributions</span>
+                <span class="spec-value">8 Models</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Calculators</span>
+                <span class="spec-value">PDF, PMF, CDF</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <span class="card-link-text">Launch Simulation</span>
+            <svg class="card-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </a>
+
+        <!-- Card 4: Confidence Intervals -->
+        <a href="experiments/confidence-intervals/index.html" class="experiment-card" data-category="statistics">
+          <div class="card-header">
+            <div class="card-meta">
+              <div class="card-meta-left">
+                <span class="badge badge-outline">EXP-04</span>
+                <span class="badge badge-secondary">Estimation</span>
+              </div>
+              <span class="status-indicator"><span class="status-dot"></span> Live</span>
+            </div>
+            <h3 class="card-title">Confidence Intervals &amp; Coverage</h3>
+            <p class="card-description">Watch repeated random sampling in action: see how 95% confidence intervals trap the fixed population mean μ in long-run trials.</p>
+          </div>
+
+          <!-- SVG Visual Preview: Confidence Intervals with Hits and Misses -->
+          <div class="card-visual">
+            <svg viewBox="0 0 300 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="20" y1="105" x2="280" y2="105" stroke="#27272a" stroke-width="1"/>
+              <!-- Reference Line μ -->
+              <line x1="150" y1="15" x2="150" y2="105" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3 3"/>
+              <!-- Green Hits -->
+              <line x1="90" y1="30" x2="210" y2="30" stroke="#10b981" stroke-width="2"/>
+              <circle cx="155" cy="30" r="3" fill="#10b981"/>
+              <line x1="105" y1="48" x2="225" y2="48" stroke="#10b981" stroke-width="2"/>
+              <circle cx="165" cy="48" r="3" fill="#10b981"/>
+              <line x1="80" y1="66" x2="195" y2="66" stroke="#10b981" stroke-width="2"/>
+              <circle cx="138" cy="66" r="3" fill="#10b981"/>
+              <!-- Red Miss -->
+              <line x1="160" y1="84" x2="270" y2="84" stroke="#f43f5e" stroke-width="2"/>
+              <circle cx="215" cy="84" r="3" fill="#f43f5e"/>
+              <text x="154" y="22" fill="#f59e0b" font-family="'Geist Mono', monospace" font-size="9">True μ</text>
+            </svg>
+          </div>
+
+          <div class="card-content">
+            <div class="formula-box">
+              <code>X̄ ± z* · (σ / √n)</code>
+              <span class="formula-label">Margin of Error</span>
+            </div>
+            <div class="card-specs">
+              <div class="spec-item">
+                <span class="spec-label">Formulas</span>
+                <span class="spec-value">z &amp; t Intervals</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Coverage</span>
+                <span class="spec-value">80% to 99%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <span class="card-link-text">Launch Simulation</span>
+            <svg class="card-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </a>
+
+        <!-- Card 5: Hypothesis Testing -->
+        <a href="experiments/hypothesis-testing/index.html" class="experiment-card" data-category="statistics">
+          <div class="card-header">
+            <div class="card-meta">
+              <div class="card-meta-left">
+                <span class="badge badge-outline">EXP-05</span>
+                <span class="badge badge-secondary">Testing</span>
+              </div>
+              <span class="status-indicator"><span class="status-dot"></span> Live</span>
+            </div>
+            <h3 class="card-title">Hypothesis Testing: z &amp; t Tests</h3>
+            <p class="card-description">Interactive rejection regions, critical values, p-value tail integration, and trade-offs between Type I/II errors and statistical power.</p>
+          </div>
+
+          <!-- SVG Visual Preview: Null curve with shaded red rejection zone and p-value marker -->
+          <div class="card-visual">
+            <svg viewBox="0 0 300 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="20" y1="105" x2="280" y2="105" stroke="#27272a" stroke-width="1"/>
+              <!-- Null Bell Curve -->
+              <path d="M 30 104 C 80 104, 110 95, 130 55 C 142 30, 150 20, 150 20 C 150 20, 158 30, 170 55 C 190 95, 220 104, 270 104" stroke="#38bdf8" stroke-width="2" fill="none"/>
+              <!-- Critical Rejection Region Tails (Rose) -->
+              <path d="M 30 104 C 45 104, 60 102, 75 95 L 75 104 Z" fill="rgba(244, 63, 94, 0.45)"/>
+              <path d="M 225 95 C 240 102, 255 104, 270 104 L 225 104 Z" fill="rgba(244, 63, 94, 0.45)"/>
+              <!-- Critical line -->
+              <line x1="225" y1="40" x2="225" y2="104" stroke="#f43f5e" stroke-width="1.5" stroke-dasharray="2 2"/>
+              <!-- Observed stat marker -->
+              <line x1="242" y1="25" x2="242" y2="104" stroke="#fafafa" stroke-width="2"/>
+              <circle cx="242" cy="25" r="3.5" fill="#10b981"/>
+              <text x="210" y="32" fill="#f43f5e" font-family="'Geist Mono', monospace" font-size="8">z_crit</text>
+              <text x="246" y="24" fill="#fafafa" font-family="'Geist Mono', monospace" font-size="8">z_obs</text>
+            </svg>
+          </div>
+
+          <div class="card-content">
+            <div class="formula-box">
+              <code>p ≤ α ⇔ |z| ≥ z_crit</code>
+              <span class="formula-label">Decision Rule</span>
+            </div>
+            <div class="card-specs">
+              <div class="spec-item">
+                <span class="spec-label">Tests</span>
+                <span class="spec-value">z-Test &amp; t-Test</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Concepts</span>
+                <span class="spec-value">p-Value, α, Power</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <span class="card-link-text">Launch Simulation</span>
+            <svg class="card-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </a>
+
+        <!-- Card 6: A/B Testing -->
+        <a href="experiments/ab-testing/index.html" class="experiment-card" data-category="statistics">
+          <div class="card-header">
+            <div class="card-meta">
+              <div class="card-meta-left">
+                <span class="badge badge-outline">EXP-06</span>
+                <span class="badge badge-secondary">A/B Testing</span>
+              </div>
+              <span class="status-indicator"><span class="status-dot"></span> Live</span>
+            </div>
+            <h3 class="card-title">A/B Testing &amp; Two-Sample Inference</h3>
+            <p class="card-description">Simulate online product experiments: conversion rates, Welch's t-tests, difference confidence intervals, and the sequential peeking hazard.</p>
+          </div>
+
+          <!-- SVG Visual Preview: Variant A vs Variant B Bar with CI Whiskers -->
+          <div class="card-visual">
+            <svg viewBox="0 0 300 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="20" y1="105" x2="280" y2="105" stroke="#27272a" stroke-width="1"/>
+              <!-- Variant A Bar -->
+              <rect x="70" y="60" width="45" height="45" rx="3" fill="#27272a" stroke="#3f3f46"/>
+              <line x1="92" y1="42" x2="92" y2="78" stroke="#a1a1aa" stroke-width="2"/>
+              <line x1="85" y1="42" x2="100" y2="42" stroke="#a1a1aa" stroke-width="2"/>
+              <line x1="85" y1="78" x2="100" y2="78" stroke="#a1a1aa" stroke-width="2"/>
+              <text x="75" y="115" fill="#a1a1aa" font-family="'Geist Mono', monospace" font-size="9">Control A</text>
+              <!-- Variant B Bar (Winner) -->
+              <rect x="175" y="40" width="45" height="65" rx="3" fill="#10b981" stroke="#059669" fill-opacity="0.85"/>
+              <line x1="197" y1="24" x2="197" y2="56" stroke="#fafafa" stroke-width="2"/>
+              <line x1="190" y1="24" x2="205" y2="24" stroke="#fafafa" stroke-width="2"/>
+              <line x1="190" y1="56" x2="205" y2="56" stroke="#fafafa" stroke-width="2"/>
+              <text x="170" y="115" fill="#10b981" font-family="'Geist Mono', monospace" font-size="9">Treatment B</text>
+            </svg>
+          </div>
+
+          <div class="card-content">
+            <div class="formula-box">
+              <code>(p̂_B - p̂_A) ± z* · SE_diff</code>
+              <span class="formula-label">Lift CI</span>
+            </div>
+            <div class="card-specs">
+              <div class="spec-item">
+                <span class="spec-label">Metrics</span>
+                <span class="spec-value">Rates &amp; Continuous</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Simulation</span>
+                <span class="spec-value">Live Visitor Stream</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <span class="card-link-text">Launch Simulation</span>
+            <svg class="card-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </a>
+
+        <!-- Card 7: Linear Regression (Coming Soon) -->
+        <div class="experiment-card coming-soon" data-category="ml statistics">
+          <div class="card-header">
+            <div class="card-meta">
+              <div class="card-meta-left">
+                <span class="badge badge-outline">EXP-07</span>
                 <span class="badge badge-secondary">Regression</span>
               </div>
               <span class="status-indicator"><span class="status-dot amber"></span> Planned</span>
@@ -283,19 +494,14 @@
           <!-- SVG Visual Preview: Scatter with Residuals & Fit Line -->
           <div class="card-visual">
             <svg viewBox="0 0 300 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <!-- Grid -->
               <line x1="20" y1="105" x2="280" y2="105" stroke="#27272a" stroke-width="1"/>
               <line x1="20" y1="15" x2="20" y2="105" stroke="#27272a" stroke-width="1"/>
-              <!-- Confidence Band -->
               <polygon points="35,92 265,22 265,38 35,102" fill="rgba(56, 189, 248, 0.08)"/>
-              <!-- Fitted Line -->
               <line x1="35" y1="97" x2="265" y2="30" stroke="#38bdf8" stroke-width="2"/>
-              <!-- Residuals (dashed red lines to points) -->
               <line x1="60" y1="89" x2="60" y2="78" stroke="#f43f5e" stroke-width="1.2" stroke-dasharray="2 2"/>
               <line x1="110" y1="75" x2="110" y2="86" stroke="#f43f5e" stroke-width="1.2" stroke-dasharray="2 2"/>
               <line x1="160" y1="60" x2="160" y2="48" stroke="#f43f5e" stroke-width="1.2" stroke-dasharray="2 2"/>
               <line x1="210" y1="46" x2="210" y2="55" stroke="#f43f5e" stroke-width="1.2" stroke-dasharray="2 2"/>
-              <!-- Scatter Points -->
               <circle cx="60" cy="78" r="3.5" fill="#fafafa" stroke="#38bdf8" stroke-width="1.5"/>
               <circle cx="110" cy="86" r="3.5" fill="#fafafa" stroke="#38bdf8" stroke-width="1.5"/>
               <circle cx="160" cy="48" r="3.5" fill="#fafafa" stroke="#38bdf8" stroke-width="1.5"/>
@@ -401,7 +607,10 @@
           <span class="footer-nav-title">Simulations</span>
           <a href="experiments/central-limit-theorem/index.html" class="footer-nav-link">Central Limit Theorem</a>
           <a href="experiments/law-of-large-numbers/index.html" class="footer-nav-link">Law of Large Numbers</a>
-          <a href="#experiments" class="footer-nav-link">Linear Regression (Planned)</a>
+          <a href="experiments/probability-distributions/index.html" class="footer-nav-link">Probability Distributions</a>
+          <a href="experiments/confidence-intervals/index.html" class="footer-nav-link">Confidence Intervals</a>
+          <a href="experiments/hypothesis-testing/index.html" class="footer-nav-link">Hypothesis Testing</a>
+          <a href="experiments/ab-testing/index.html" class="footer-nav-link">A/B Testing</a>
         </div>
         <div class="footer-nav-col">
           <span class="footer-nav-title">References</span>

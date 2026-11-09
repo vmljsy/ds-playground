@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A/B Testing — ds.sim</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fafafa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M3 3v18h18'/><path d='M7 16c2.5-4 5.5-10 8-10s3 8 5 8'/></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container nav-container">
+            <a href="../../index.html" class="nav-brand">
+                <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 3v18h18" />
+                    <path d="M7 16c2.5-4 5.5-10 8-10s3 8 5 8" />
+                </svg>
+                <span class="brand-name">ds<span class="brand-dot">.</span>sim</span>
+            </a>
+            <div class="breadcrumb">
+                <a href="../../index.html">Home</a>
+                <span class="breadcrumb-sep">/</span>
+                <a href="../../index.html#experiments">Experiments</a>
+                <span class="breadcrumb-sep">/</span>
+                <span class="breadcrumb-current">A/B Testing</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <!-- 1. Header -->
+        <header class="experiment-header">
+            <div class="hero-pill" style="margin-bottom: 1rem;">
+                <span class="hero-pill-indicator"></span>
+                <span>Applied Causal Inference &amp; Experimentation</span>
+            </div>
+            <h1>A/B Testing &amp; Two-Sample Inference</h1>
+            <p class="subtitle">Real-world experimentation in production: conversion lift, Welch's t-tests, and the sequential peeking hazard</p>
+        </header>
+
+        <!-- 2. Theory Box -->
+        <div class="theory-box">
+            <h3>How Two-Sample Experimentation Works</h3>
+            <p>
+                In an A/B test, users are randomly assigned to either the <strong>Control (A)</strong> baseline or the <strong>Treatment (B)</strong> variant.
+                Depending on the metric, statistical inference tests whether the observed difference is real or merely sampling noise:
+            </p>
+            <p>
+                $$\text{Proportions (z-Test):} \quad z = \frac{\hat{p}_B - \hat{p}_A}{\sqrt{\hat{p}_{\text{pool}}(1-\hat{p}_{\text{pool}})\left(\frac{1}{n_A} + \frac{1}{n_B}\right)}} \quad \sim N(0, 1)$$
+                $$\text{Continuous Means (Welch's t-Test):} \quad t = \frac{\bar{X}_B - \bar{X}_A}{\sqrt{\frac{s_A^2}{n_A} + \frac{s_B^2}{n_B}}} \quad \sim t(df)$$
+            </p>
+            <h3>Difference Confidence Interval</h3>
+            <blockquote>
+                $$\text{Lift CI:} \quad (\hat{\theta}_B - \hat{\theta}_A) \pm z^* \cdot SE_{\text{diff}}$$
+                If the confidence interval for the difference does not contain zero, the observed lift is statistically significant at significance level $\alpha$.
+            </blockquote>
+        </div>
+
+        <!-- 3. Interactive Workbench -->
+        <section class="section">
+            <h2>Experimentation Workbench</h2>
+
+            <div class="controls-panel">
+                <div class="controls-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; width: 100%;">
+                    
+                    <div class="control-group">
+                        <label for="metric-select">Test Metric Type</label>
+                        <select id="metric-select">
+                            <option value="proportions" selected>Conversion Rate (Two-Proportion z-Test)</option>
+                            <option value="continuous">Revenue / Order Value (Welch's t-Test)</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="sample-size-slider">Sample Size / Variant (N): <span id="val-sample-size">2,500</span></label>
+                        <input type="range" id="sample-size-slider" min="200" max="10000" value="2500" step="100">
+                    </div>
+
+                    <div class="control-group" id="baseline-group">
+                        <label for="baseline-slider"><span id="lbl-baseline">Baseline Rate (p_A)</span>: <span id="val-baseline">10.0%</span></label>
+                        <input type="range" id="baseline-slider" min="0.02" max="0.30" value="0.10" step="0.005">
+                    </div>
+
+                    <div class="control-group" id="lift-group">
+                        <label for="lift-slider"><span id="lbl-lift">True Effect Lift (Δ)</span>: <span id="val-lift">+1.5% pp</span></label>
+                        <input type="range" id="lift-slider" min="-0.03" max="0.04" value="0.015" step="0.002">
+                    </div>
+
+                </div>
+
+                <div class="btn-group" style="margin-top: 1rem; width: 100%;">
+                    <button id="btn-run-full" class="btn btn-primary">Simulate Full Experiment</button>
+                    <button id="btn-stream" class="btn btn-secondary">Stream Visitors Live</button>
+                    <button id="btn-reset" class="btn btn-ghost">Reset</button>
+                </div>
+            </div>
+
+            <!-- Business Decision Banner -->
+            <div id="decision-banner" style="margin: 1.25rem 0; padding: 1.15rem 1.25rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--card-elevated); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <div style="font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted-foreground);" id="decision-label">EXPERIMENT VERDICT</div>
+                    <div style="font-size: 1.25rem; font-weight: 700; margin-top: 0.25rem;" id="decision-title">Statistically Significant Winner!</div>
+                    <div style="font-size: 0.875rem; color: var(--muted-foreground); margin-top: 0.25rem;" id="decision-detail">Variant B achieved a statistically significant lift (p = 0.0180 ≤ 0.05). 95% Confidence Interval for difference excludes zero.</div>
+                </div>
+                <div>
+                    <span class="badge badge-emerald" id="decision-badge" style="font-size: 0.875rem; padding: 0.35rem 0.75rem;">Roll Out Variant B</span>
+                </div>
+            </div>
+
+            <!-- Plots Row 1: Comparison & Difference Distribution -->
+            <div class="chart-row">
+                <div class="chart-container" style="flex: 1;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600; font-size: 0.875rem;">Variant Comparison with 95% CIs</span>
+                        <span class="badge badge-outline" id="badge-metric-name">Conversion Rate</span>
+                    </div>
+                    <div id="plot-variants" style="min-height: 380px;"></div>
+                </div>
+
+                <div class="chart-container" style="flex: 1;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600; font-size: 0.875rem;">Difference (B - A) Distribution &amp; 95% CI</span>
+                        <span style="font-size: 0.75rem; color: var(--muted-foreground);">Zero Benchmark</span>
+                    </div>
+                    <div id="plot-diff" style="min-height: 380px;"></div>
+                </div>
+            </div>
+
+            <!-- Sequential Peeking Hazard Chart -->
+            <div class="chart-container" style="margin-top: 1.25rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <span style="font-weight: 600; font-size: 0.875rem;">Sequential Peeking Hazard: P-Value Evolution Over Sample Accumulation</span>
+                    <span class="badge badge-outline" id="badge-peeking-status">Full Sample (n=2,500)</span>
+                </div>
+                <div id="plot-peeking" style="min-height: 280px;"></div>
+            </div>
+
+            <!-- Statistical Metrics Dashboard -->
+            <div class="stats-grid" style="margin-top: 1.25rem;">
+                <div class="stat-box">
+                    <span class="stat-label">Variant A (Control)</span>
+                    <span class="stat-value" id="stat-var-a">10.12% ± 1.18%</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Variant B (Treatment)</span>
+                    <span class="stat-value" id="stat-var-b" style="color: var(--chart-blue);">11.64% ± 1.26%</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Absolute Lift (Δ)</span>
+                    <span class="stat-value" id="stat-abs-lift" style="color: var(--chart-emerald);">+1.52% pp</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Relative Lift (%)</span>
+                    <span class="stat-value" id="stat-rel-lift" style="color: var(--chart-emerald);">+15.02%</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Test Statistic (z or t)</span>
+                    <span class="stat-value" id="stat-test-stat">+2.36</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">p-Value</span>
+                    <span class="stat-value" id="stat-p-value" style="color: var(--chart-emerald);">0.0183</span>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- 4. Practical Takeaways Section -->
+        <section class="section">
+            <h2>Practical Rules &amp; Experimentation Pitfalls</h2>
+
+            <div class="warning-box" style="margin-bottom: 1rem;">
+                <strong>The Sequential "Peeking" Problem:</strong><br>
+                Observing p-values continuously and declaring a winner as soon as $p < 0.05$ creates an optical illusion of significance. Random stochastic walk guarantees that even when there is <em>zero real difference</em>, the p-value will dip below 0.05 at some point during sample collection over 30% of the time!
+            </div>
+
+            <div class="info-box">
+                <strong>Sample Size &amp; Minimum Detectable Effect (MDE):</strong><br>
+                Never stop an experiment early or run it without an a priori power calculation. Determine your required sample size $N$ upfront based on baseline rate, desired statistical power ($80\%$), and the smallest business lift worth detecting.
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-inner">
+            <div class="footer-brand">
+                <a href="../../index.html" class="nav-brand">
+                    <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 3v18h18" />
+                        <path d="M7 16c2.5-4 5.5-10 8-10s3 8 5 8" />
+                    </svg>
+                    <span class="brand-name">ds<span class="brand-dot">.</span>sim</span>
+                </a>
+                <p class="footer-tagline">Interactive statistical and machine learning simulations. Client-rendered &amp; open source.</p>
+            </div>
+            <div class="footer-nav">
+                <div class="footer-nav-col">
+                    <span class="footer-nav-title">Simulations</span>
+                    <a href="../hypothesis-testing/index.html" class="footer-nav-link">Hypothesis Testing</a>
+                    <a href="../confidence-intervals/index.html" class="footer-nav-link">Confidence Intervals</a>
+                    <a href="../probability-distributions/index.html" class="footer-nav-link">Probability Distributions</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+    <script type="module">
+        import init from './simulation.js';
+        init();
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '$', right: '$', display: false }
+            ]
+        });
+    </script>
+</body>
+</html>
+

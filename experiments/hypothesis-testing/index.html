@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hypothesis Testing — ds.sim</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fafafa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M3 3v18h18'/><path d='M7 16c2.5-4 5.5-10 8-10s3 8 5 8'/></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container nav-container">
+            <a href="../../index.html" class="nav-brand">
+                <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 3v18h18" />
+                    <path d="M7 16c2.5-4 5.5-10 8-10s3 8 5 8" />
+                </svg>
+                <span class="brand-name">ds<span class="brand-dot">.</span>sim</span>
+            </a>
+            <div class="breadcrumb">
+                <a href="../../index.html">Home</a>
+                <span class="breadcrumb-sep">/</span>
+                <a href="../../index.html#experiments">Experiments</a>
+                <span class="breadcrumb-sep">/</span>
+                <span class="breadcrumb-current">Hypothesis Testing</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <!-- 1. Header -->
+        <header class="experiment-header">
+            <div class="hero-pill" style="margin-bottom: 1rem;">
+                <span class="hero-pill-indicator"></span>
+                <span>Inferential Significance &amp; Decision Theory</span>
+            </div>
+            <h1>Hypothesis Testing: Critical Values &amp; p-Values</h1>
+            <p class="subtitle">Interactive workbench for z-tests, Student's t-tests, rejection regions, and error rates</p>
+        </header>
+
+        <!-- 2. Theory Box -->
+        <div class="theory-box">
+            <h3>The Anatomy of Hypothesis Testing</h3>
+            <p>
+                In classical Null Hypothesis Significance Testing (NHST), we assume the default null hypothesis $H_0: \mu = \mu_0$ is true until evidence contradicts it.
+            </p>
+            <p>
+                $$\text{Test Statistic:} \quad z = \frac{\bar{X} - \mu_0}{\sigma / \sqrt{n}} \quad \text{or} \quad t = \frac{\bar{X} - \mu_0}{s / \sqrt{n}} \quad (df = n - 1)$$
+            </p>
+            <h3>Critical Values vs p-Values</h3>
+            <p>
+                <strong>Critical Value ($z_{\text{crit}}$ or $t_{\text{crit}}$):</strong> The threshold set in advance by your chosen significance level $\alpha$. Values beyond this define the <em>Rejection Region</em>.
+            </p>
+            <p>
+                <strong>p-Value:</strong> The probability of observing a test statistic as extreme as (or more extreme than) the sample result, <em>assuming $H_0$ is true</em>.
+            </p>
+            <blockquote>
+                $$\text{Decision Rule:} \quad p \le \alpha \iff |\text{test statistic}| \ge \text{critical value} \implies \text{Reject } H_0$$
+            </blockquote>
+        </div>
+
+        <!-- 3. Interactive Workbench -->
+        <section class="section">
+            <h2>Significance Workbench</h2>
+
+            <div class="controls-panel">
+                <div class="controls-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; width: 100%;">
+                    
+                    <div class="control-group">
+                        <label for="test-select">Statistical Test Family</label>
+                        <select id="test-select">
+                            <option value="z" selected>One-Sample z-Test (Normal N(0,1))</option>
+                            <option value="t">One-Sample t-Test (Student's t(df))</option>
+                            <option value="compare">Overlay t vs z (Heavier Tails Comparison)</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="direction-select">Alternative Hypothesis (Hₐ)</label>
+                        <select id="direction-select">
+                            <option value="two-sided" selected>Two-Tailed (Hₐ: μ ≠ μ₀)</option>
+                            <option value="greater">Right-Tailed (Hₐ: μ &gt; μ₀)</option>
+                            <option value="less">Left-Tailed (Hₐ: μ &lt; μ₀)</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="alpha-select">Significance Level (α)</label>
+                        <select id="alpha-select">
+                            <option value="0.10">α = 0.10 (90% Conf)</option>
+                            <option value="0.05" selected>α = 0.05 (95% Conf, Standard)</option>
+                            <option value="0.01">α = 0.01 (99% Conf, Rigorous)</option>
+                            <option value="0.001">α = 0.001 (99.9% Conf)</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group" id="df-group">
+                        <label for="df-slider">Degrees of Freedom (df = n-1): <span id="val-df">5</span></label>
+                        <input type="range" id="df-slider" min="1" max="50" value="5" step="1">
+                    </div>
+
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; width: 100%; padding-top: 0.75rem; border-top: 1px solid var(--border);">
+                    <div class="control-group">
+                        <label for="stat-slider">Observed Test Statistic (<span id="stat-name">z_obs</span>): <span id="val-stat">2.15</span></label>
+                        <input type="range" id="stat-slider" min="-4.0" max="4.0" step="0.05" value="2.15">
+                    </div>
+
+                    <div class="control-group">
+                        <label for="view-mode-select">View Analysis Mode</label>
+                        <select id="view-mode-select">
+                            <option value="null_pvalue" selected>Null Distribution &amp; p-Value Shading</option>
+                            <option value="power_errors">Power &amp; Errors (H₀ vs H₁, α, β, 1-β)</option>
+                        </select>
+                    </div>
+
+                    <div class="btn-group" style="display: flex; align-items: flex-end;">
+                        <button id="btn-draw-null" class="btn btn-outline btn-sm">Sample from H₀</button>
+                        <button id="btn-draw-alt" class="btn btn-outline btn-sm">Sample from H₁ (Lift)</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Dynamic Decision Banner -->
+            <div id="verdict-banner" style="margin: 1.25rem 0; padding: 1.15rem 1.25rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--card-elevated); display: flex; align-items: center; justify-content: space-between; flex-wrap: gap: 1rem;">
+                <div>
+                    <div style="font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted-foreground);" id="verdict-label">DECISION RULE VERDICT</div>
+                    <div style="font-size: 1.25rem; font-weight: 700; margin-top: 0.25rem;" id="verdict-title">Reject H₀ — Statistically Significant</div>
+                    <div style="font-size: 0.875rem; color: var(--muted-foreground); margin-top: 0.25rem;" id="verdict-detail">p-value (0.0316) ≤ α (0.0500) &middot; Test statistic (2.150) falls inside the rejection region.</div>
+                </div>
+                <div id="verdict-badge-wrap">
+                    <span class="badge badge-emerald" id="verdict-badge" style="font-size: 0.875rem; padding: 0.35rem 0.75rem;">Reject H₀</span>
+                </div>
+            </div>
+
+            <!-- Plots Row -->
+            <div class="chart-row">
+                <div class="chart-container" style="flex: 2;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600; font-size: 0.875rem;" id="main-plot-title">Null Distribution &amp; Rejection Boundary</span>
+                        <span class="badge badge-outline" id="badge-tails">Two-Tailed Rejection</span>
+                    </div>
+                    <div id="plot-null" style="min-height: 440px;"></div>
+                </div>
+
+                <div class="chart-container" style="flex: 1;" id="side-plot-container">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600; font-size: 0.875rem;" id="side-plot-title">P-Value vs Alpha Comparison</span>
+                        <span style="font-size: 0.75rem; color: var(--muted-foreground);">Area Ratio</span>
+                    </div>
+                    <div id="plot-comparison" style="min-height: 440px;"></div>
+                </div>
+            </div>
+
+            <!-- Statistics Grid -->
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span class="stat-label">p-Value P(|Stat| ≥ Obs | H₀)</span>
+                    <span class="stat-value" id="stat-p-value" style="color: var(--chart-blue);">0.0316</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Significance Level (α)</span>
+                    <span class="stat-value" id="stat-alpha">0.0500</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Critical Value(s)</span>
+                    <span class="stat-value" id="stat-crit-val" style="color: var(--chart-rose);">±1.960</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Observed Test Statistic</span>
+                    <span class="stat-value" id="stat-obs-val">+2.150</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Type I Error (False Positive)</span>
+                    <span class="stat-value" id="stat-type1">5.0%</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Statistical Power (1 - β)</span>
+                    <span class="stat-value" id="stat-power" style="color: var(--chart-emerald);">65.2%</span>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- 4. Key Rules & Error Matrix Section -->
+        <section class="section">
+            <h2>Error Types &amp; Statistical Decision Matrix</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Reality \ Your Decision</th>
+                            <th>Fail to Reject $H_0$ (Negative)</th>
+                            <th>Reject $H_0$ (Positive)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Null $H_0$ is True</strong> (No actual effect)</td>
+                            <td style="color: var(--chart-emerald);"><strong>Correct Decision</strong> (Probability = $1 - \alpha$)</td>
+                            <td style="color: var(--chart-rose);"><strong>Type I Error (False Alarm)</strong> (Probability = $\alpha$)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Alternative $H_1$ is True</strong> (Real effect exists)</td>
+                            <td style="color: var(--chart-rose);"><strong>Type II Error (Missed Detection)</strong> (Probability = $\beta$)</td>
+                            <td style="color: var(--chart-emerald);"><strong>Correct Decision (Statistical Power)</strong> (Probability = $1 - \beta$)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="info-box" style="margin-top: 1.5rem;">
+                <strong>Why degrees of freedom matter in t-tests:</strong><br>
+                For small $n$, the Student's $t$ curve has heavier tails than the normal curve. At $df = 4$, the critical value for $\alpha = 0.05$ (two-tailed) is $\pm 2.776$ instead of $\pm 1.960$. 
+                If you mistakenly used the normal $z$-test on a sample of size $n=5$, a test statistic of $2.15$ would falsely claim statistical significance ($2.15 > 1.96$), whereas the correct $t$-test shows it is not significant ($2.15 < 2.776$)!
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-inner">
+            <div class="footer-brand">
+                <a href="../../index.html" class="nav-brand">
+                    <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 3v18h18" />
+                        <path d="M7 16c2.5-4 5.5-10 8-10s3 8 5 8" />
+                    </svg>
+                    <span class="brand-name">ds<span class="brand-dot">.</span>sim</span>
+                </a>
+                <p class="footer-tagline">Interactive statistical intuition for data scientists and ML engineers.</p>
+            </div>
+            <div class="footer-nav">
+                <div class="footer-nav-col">
+                    <span class="footer-nav-title">Simulations</span>
+                    <a href="../probability-distributions/index.html" class="footer-nav-link">Probability Distributions</a>
+                    <a href="../confidence-intervals/index.html" class="footer-nav-link">Confidence Intervals</a>
+                    <a href="../central-limit-theorem/index.html" class="footer-nav-link">Central Limit Theorem</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+    <script type="module">
+        import init from './simulation.js';
+        init();
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '$', right: '$', display: false }
+            ]
+        });
+    </script>
+</body>
+</html>
+

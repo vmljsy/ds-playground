@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confidence Intervals — ds.sim</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fafafa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M3 3v18h18'/><path d='M7 16c2.5-4 5.5-10 8-10s3 8 5 8'/></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container nav-container">
+            <a href="../../index.html" class="nav-brand">
+                <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 3v18h18" />
+                    <path d="M7 16c2.5-4 5.5-10 8-10s3 8 5 8" />
+                </svg>
+                <span class="brand-name">ds<span class="brand-dot">.</span>sim</span>
+            </a>
+            <div class="breadcrumb">
+                <a href="../../index.html">Home</a>
+                <span class="breadcrumb-sep">/</span>
+                <a href="../../index.html#experiments">Experiments</a>
+                <span class="breadcrumb-sep">/</span>
+                <span class="breadcrumb-current">Confidence Intervals</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <!-- 1. Header -->
+        <header class="experiment-header">
+            <div class="hero-pill" style="margin-bottom: 1rem;">
+                <span class="hero-pill-indicator"></span>
+                <span>Statistical Inference &amp; Estimation</span>
+            </div>
+            <h1>Confidence Intervals &amp; Coverage Probability</h1>
+            <p class="subtitle">Demystifying frequentist repeated sampling: watch how 95% confidence intervals trap the true mean</p>
+        </header>
+
+        <!-- 2. Theory Section -->
+        <div class="theory-box">
+            <h3>Frequentist Definition of a Confidence Interval</h3>
+            <p>
+                A $(1 - \alpha)$ confidence interval for a population mean $\mu$ is an interval $[\bar{X} - E, \bar{X} + E]$ computed from random sample data:
+            </p>
+            <p>
+                $$\text{z-Interval (known } \sigma\text{):} \quad \bar{X} \pm z_{1-\alpha/2} \cdot \frac{\sigma}{\sqrt{n}}$$
+                $$\text{t-Interval (unknown } \sigma\text{):} \quad \bar{X} \pm t_{1-\alpha/2,\, n-1} \cdot \frac{s}{\sqrt{n}}$$
+            </p>
+            <h3>The Critical Frequentist Insight</h3>
+            <blockquote>
+                The population parameter $\mu$ is fixed and unmoving. It is the <strong>interval that is random</strong>! 
+                "95% confidence" means that over hundreds of repeated independent experiments, approximately 95% of the calculated intervals will capture $\mu$, while 5% will miss.
+            </blockquote>
+        </div>
+
+        <!-- 3. Interactive Workbench -->
+        <section class="section">
+            <h2>Repeated Sampling Simulation</h2>
+
+            <div class="controls-panel">
+                <div class="controls-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; width: 100%;">
+                    
+                    <div class="control-group">
+                        <label for="ci-level-select">Confidence Level (1 - α)</label>
+                        <select id="ci-level-select">
+                            <option value="0.80">80% (α = 0.20)</option>
+                            <option value="0.90">90% (α = 0.10)</option>
+                            <option value="0.95" selected>95% (α = 0.05)</option>
+                            <option value="0.99">99% (α = 0.01)</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="method-select">Interval Formula</label>
+                        <select id="method-select">
+                            <option value="z" selected>z-Interval (Known σ = 10)</option>
+                            <option value="t">t-Interval (Estimated s, df = n-1)</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="pop-select">Population Distribution</label>
+                        <select id="pop-select">
+                            <option value="normal" selected>Normal (μ=50, σ=10)</option>
+                            <option value="exponential">Exponential (Skewed, μ=50)</option>
+                            <option value="uniform">Uniform [32.7, 67.3] (μ=50)</option>
+                            <option value="bimodal">Bimodal Mixture (μ=50)</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="sample-size-slider">Sample Size (n): <span id="val-sample-size">30</span></label>
+                        <input type="range" id="sample-size-slider" min="5" max="250" value="30" step="5">
+                    </div>
+
+                </div>
+
+                <div class="btn-group" style="margin-top: 1rem; width: 100%;">
+                    <button id="btn-draw-100" class="btn btn-primary">Draw 100 Intervals</button>
+                    <button id="btn-draw-1" class="btn btn-secondary">+1 Interval</button>
+                    <button id="btn-animate" class="btn btn-outline">Animate Accumulation</button>
+                    <button id="btn-reset" class="btn btn-ghost">Reset Counter</button>
+                </div>
+            </div>
+
+            <!-- Plots Row -->
+            <div class="chart-row">
+                <div class="chart-container" style="flex: 2;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600; font-size: 0.875rem;">Repeated Sample Intervals (Green = Hit μ, Red = Missed μ)</span>
+                        <span class="badge badge-outline" id="badge-interval-count">100 Intervals</span>
+                    </div>
+                    <div id="plot-forest" style="min-height: 480px;"></div>
+                </div>
+
+                <div class="chart-container" style="flex: 1;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600; font-size: 0.875rem;">Selected Sample Inspection</span>
+                        <span style="font-size: 0.75rem; color: var(--muted-foreground);" id="inspect-label">Latest Sample</span>
+                    </div>
+                    <div id="plot-sample-inspect" style="min-height: 480px;"></div>
+                </div>
+            </div>
+
+            <!-- Empirical Coverage Statistics Grid -->
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span class="stat-label">Batch Coverage Rate</span>
+                    <span class="stat-value" id="stat-batch-coverage" style="color: var(--chart-emerald);">95.0%</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Batch Hit / Miss Tally</span>
+                    <span class="stat-value" id="stat-tally">95 / 5</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Cumulative Long-Run Coverage</span>
+                    <span class="stat-value" id="stat-cum-coverage">95.0%</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Critical Value (z* or t*)</span>
+                    <span class="stat-value" id="stat-crit-val">1.960</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Mean Margin of Error (E)</span>
+                    <span class="stat-value" id="stat-margin-error">±3.58</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">True Mean (μ)</span>
+                    <span class="stat-value" style="color: var(--chart-amber);">50.00</span>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- 4. Key Takeaways & Misconceptions Section -->
+        <section class="section">
+            <h2>Common Fallacies &amp; Practical Rules</h2>
+
+            <div class="info-box" style="margin-bottom: 1rem;">
+                <strong>Fallacy: "There is a 95% probability that $\mu$ lies between $46.42$ and $53.58$."</strong><br>
+                <em>Reality:</em> Once the interval numbers are calculated from data, $\mu$ is either inside it (probability = 1) or outside it (probability = 0). The 95% probability applies to the <em>process of generating intervals</em> over repeated samples before data is gathered.
+            </div>
+
+            <div class="info-box" style="margin-bottom: 1rem;">
+                <strong>Why Sample Size ($n$) Shrinks Interval Width:</strong><br>
+                Margin of error shrinks inversely with the square root of $n$: $E \propto 1/\sqrt{n}$. To cut your interval width in half, you must collect <strong>4× the sample size</strong>.
+            </div>
+
+            <div class="warning-box">
+                <strong>When to use $t$ instead of $z$:</strong><br>
+                In almost all real-world data science problems, the true population variance $\sigma$ is unknown and must be estimated via sample standard deviation $s$. Using the normal $z^*$ instead of Student's $t^*$ on small samples ($n < 30$) understates error and produces intervals that are too narrow, causing empirical coverage to fall below the nominal 95% target!
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-inner">
+            <div class="footer-brand">
+                <a href="../../index.html" class="nav-brand">
+                    <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 3v18h18" />
+                        <path d="M7 16c2.5-4 5.5-10 8-10s3 8 5 8" />
+                    </svg>
+                    <span class="brand-name">ds<span class="brand-dot">.</span>sim</span>
+                </a>
+                <p class="footer-tagline">Interactive statistical intuition for data scientists and ML engineers.</p>
+            </div>
+            <div class="footer-nav">
+                <div class="footer-nav-col">
+                    <span class="footer-nav-title">Simulations</span>
+                    <a href="../probability-distributions/index.html" class="footer-nav-link">Probability Distributions</a>
+                    <a href="../central-limit-theorem/index.html" class="footer-nav-link">Central Limit Theorem</a>
+                    <a href="../law-of-large-numbers/index.html" class="footer-nav-link">Law of Large Numbers</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+    <script type="module">
+        import init from './simulation.js';
+        init();
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '$', right: '$', display: false }
+            ]
+        });
+    </script>
+</body>
+</html>
+
