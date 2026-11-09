@@ -9,7 +9,7 @@ Interactive data science simulations — learn statistics, probability, and ML c
 | Experiment | Status | Description |
 |---|---|---|
 | [Central Limit Theorem](experiments/central-limit-theorem/) | ✅ Live | See how sample means converge to a normal distribution |
-| Law of Large Numbers | 🔜 Coming soon | Watch sample averages stabilize |
+| [Law of Large Numbers](experiments/law-of-large-numbers/) | ✅ Live | Watch sample averages stabilize as trials increase across multiple paths |
 | Linear Regression | 🔜 Coming soon | Interactive least squares fitting |
 
 ## Tech Stack

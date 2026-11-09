@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Law of Large Numbers — DS Simulations</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container nav-container">
+            <a href="../../index.html" class="nav-brand">📊 DS Simulations</a>
+            <div class="breadcrumb">
+                <a href="../../index.html">Home</a>
+                <span class="breadcrumb-sep">/</span>
+                <a href="../../index.html#experiments">Experiments</a>
+                <span class="breadcrumb-sep">/</span>
+                <span class="breadcrumb-current">Law of Large Numbers</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <!-- Header -->
+        <header class="experiment-header">
+            <h1>Law of Large Numbers (LLN)</h1>
+            <p class="subtitle">Watch sample averages stabilize towards the true expected value as trials grow</p>
+        </header>
+
+        <!-- Theory Box -->
+        <div class="theory-box">
+            <h3>Mathematical Statement</h3>
+            <p>
+                Let $X_1, X_2, \dots, X_n$ be independent and identically distributed (i.i.d.) random variables with finite expected value $\mathbb{E}[X] = \mu$.
+                Then the sample average $\bar{X}_n = \frac{1}{n} \sum_{i=1}^n X_i$ converges to $\mu$:
+            </p>
+            <p>
+                $$\lim_{n \to \infty} P(|\bar{X}_n - \mu| \ge \varepsilon) = 0 \quad (\text{Weak Law})$$
+                $$P\left(\lim_{n \to \infty} \bar{X}_n = \mu\right) = 1 \quad (\text{Strong Law})$$
+            </p>
+            <h3>In Plain English</h3>
+            <blockquote>
+                As you repeat an experiment more and more times, the average of your results will get closer and closer to the theoretical expected value.
+            </blockquote>
+        </div>
+
+        <!-- Interactive Simulation -->
+        <section class="section">
+            <h2>Interactive Simulation</h2>
+
+            <!-- Controls Panel -->
+            <div class="controls-panel">
+                <div class="control-group">
+                    <label for="dist-select">Experiment / Random Variable</label>
+                    <select id="dist-select">
+                        <option value="coin">Coin Toss (Heads = 1, Tails = 0, μ = 0.5)</option>
+                        <option value="die">Fair Six-Sided Die (μ = 3.5)</option>
+                        <option value="normal">Standard Normal N(0, 1) (μ = 0)</option>
+                        <option value="exponential">Exponential λ=0.5 (μ = 2.0)</option>
+                        <option value="cauchy">Cauchy (Infinite Mean — CLT &amp; LLN Fail!)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="trials-slider">Total Trials (N): <span id="trials-value">1000</span></label>
+                    <input type="range" id="trials-slider" min="50" max="5000" value="1000" step="50">
+                </div>
+
+                <div class="control-group">
+                    <label for="paths-slider">Simultaneous Paths: <span id="paths-value">3</span></label>
+                    <input type="range" id="paths-slider" min="1" max="8" value="3" step="1">
+                </div>
+
+                <div class="control-group">
+                    <label for="xscale-select">X-Axis Scale</label>
+                    <select id="xscale-select">
+                        <option value="linear">Linear Scale</option>
+                        <option value="log">Logarithmic Scale</option>
+                    </select>
+                </div>
+
+                <div class="btn-group">
+                    <button id="btn-run" class="btn">▶ Run Simulation</button>
+                    <button id="btn-animate" class="btn btn-outline">🎬 Animate</button>
+                    <button id="btn-reset" class="btn btn-outline">🔄 Reset</button>
+                </div>
+            </div>
+
+            <!-- Charts Container -->
+            <div class="chart-container" style="min-height: 480px; margin-bottom: 2rem;">
+                <div id="lln-chart" style="width: 100%; height: 460px;"></div>
+            </div>
+
+            <!-- Statistics Panel -->
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span class="stat-label">Expected Value (μ)</span>
+                    <span class="stat-value" id="stat-true-mean">—</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Final Average (Path 1)</span>
+                    <span class="stat-value" id="stat-final-mean">—</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Absolute Error (|X̄ - μ|)</span>
+                    <span class="stat-value" id="stat-abs-error">—</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Total Trials (n)</span>
+                    <span class="stat-value" id="stat-trials">—</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- LLN vs CLT Comparison -->
+        <section class="section">
+            <h2>LLN vs. Central Limit Theorem: What's the Difference?</h2>
+            <div class="theory-box">
+                <table style="width: 100%; border-collapse: collapse; margin-top: 0.5rem;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--border); text-align: left;">
+                            <th style="padding: 10px;">Aspect</th>
+                            <th style="padding: 10px;">Law of Large Numbers (LLN)</th>
+                            <th style="padding: 10px;">Central Limit Theorem (CLT)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 10px; font-weight: 600;">Question Answered</td>
+                            <td style="padding: 10px;"><em>Where</em> does the sample average converge?</td>
+                            <td style="padding: 10px;"><em>How</em> is the error distributed around the target?</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 10px; font-weight: 600;">Core Result</td>
+                            <td style="padding: 10px;">$\bar{X}_n \to \mu$ (converges to a single point)</td>
+                            <td style="padding: 10px;">$\sqrt{n}(\bar{X}_n - \mu) \to N(0, \sigma^2)$ (bell-shaped distribution)</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 10px; font-weight: 600;">Visualization</td>
+                            <td style="padding: 10px;">A line chart funneling towards $\mu$ over time</td>
+                            <td style="padding: 10px;">A histogram forming a bell curve</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; font-weight: 600;">Rate of Convergence</td>
+                            <td style="padding: 10px;">Guarantees convergence</td>
+                            <td style="padding: 10px;">Gives the exact rate ($1/\sqrt{n}$)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Key Insights & Common Pitfalls -->
+        <section class="section">
+            <h2>Key Insights &amp; Pitfalls</h2>
+            <div class="info-box">
+                <h4>🎯 The Funnel Effect</h4>
+                <p>Early on ($n < 50$), individual streaks can cause wild fluctuations in the running average. As $n$ reaches hundreds or thousands, individual deviations get "diluted" by the massive denominator, forcing the line to hug $\mu$.</p>
+            </div>
+
+            <div class="warning-box">
+                <h4>⚠️ The Gambler's Fallacy: LLN does NOT "compensate"</h4>
+                <p>If you flip 10 heads in a row, the next flip is <strong>still 50%</strong>. The Law of Large Numbers does not work by "making tails more likely to balance things out." It works through <strong>dilution</strong>: adding 10,000 more fair flips makes those first 10 heads completely negligible in the average.</p>
+            </div>
+
+            <div class="warning-box">
+                <h4>❌ When LLN Fails: The Cauchy Distribution</h4>
+                <p>Select the <strong>Cauchy distribution</strong> in the dropdown above. Because Cauchy random variables have heavy tails and no defined finite mean, the running average will violently jump whenever an extreme value is encountered — it will <em>never</em> settle down!</p>
+            </div>
+        </section>
+
+        <!-- Navigation Footer -->
+        <div style="margin: 3rem 0; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+            <a href="../central-limit-theorem/index.html" class="btn btn-outline">← Central Limit Theorem</a>
+            <a href="../../index.html" class="btn">🏠 All Experiments</a>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>Built with curiosity 🚀 • <a href="../../index.html">← Back to Home</a></p>
+            <p class="footer-powered">Powered by Plotly.js &amp; KaTeX</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+    <script type="module">
+        import init from './simulation.js';
+        init();
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '$', right: '$', display: false }
+            ]
+        });
+    </script>
+</body>
+</html>
